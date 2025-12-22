@@ -65,6 +65,11 @@ func Load(path string) (*Config, error) {
 
 // FindComponents 将目标字符串（组名或组件名）展开为组件列表
 func (c *Config) FindComponents(target string) ([]Component, error) {
+	// 0. 特殊关键字: all
+	if target == "all" {
+		return c.Components, nil
+	}
+
 	// 1. 检查是否为组名
 	if members, ok := c.Groups[target]; ok {
 		var result []Component

@@ -11,7 +11,7 @@ import (
 )
 
 // Build 执行指定目标的构建流程
-func Build(cfg *config.Config, target string) error {
+func Build(cfg *config.Config, target string, force bool) error {
 	targets, err := cfg.FindComponents(target)
 	if err != nil {
 		return err
@@ -20,7 +20,7 @@ func Build(cfg *config.Config, target string) error {
 	fmt.Printf("🎯 目标 '%s' 包含 %d 个组件，开始构建...\n", target, len(targets))
 
 	for _, comp := range targets {
-		if err := buildOne(cfg, comp); err != nil {
+		if err := buildOne(cfg, comp, force); err != nil {
 			return fmt.Errorf("构建组件 %s 失败: %w", comp.Name, err)
 		}
 	}
@@ -29,7 +29,7 @@ func Build(cfg *config.Config, target string) error {
 }
 
 // buildOne 处理单个组件的完整生命周期
-func buildOne(cfg *config.Config, comp config.Component) error {
+func buildOne(cfg *config.Config, comp config.Component, force bool) error {
 	fmt.Printf("\n🔧 [构建中] %s (v%s)...\n", comp.Name, comp.Version)
 
 	cacheDir := expandPath(cfg.CacheDir)
@@ -66,17 +66,22 @@ func buildOne(cfg *config.Config, comp config.Component) error {
 	// 假设模式: hk-component-name-version*.rpm 或类似
 	// For simplicity, we search for *name-version*.rpm
 	cachePattern := fmt.Sprintf("*%s-%s*.rpm", comp.Name, comp.Version)
-	matches, _ := filepath.Glob(filepath.Join(cacheDir, cachePattern))
-	if len(matches) > 0 {
-		fmt.Printf("   📦 命中缓存: 发现 %d 个 RPM (%s)\n", len(matches), comp.Name)
-		// 复制到 RPMS 目录
-		rpmDir := filepath.Join(expandPath(cfg.BuildRoot), "RPMS")
-		os.MkdirAll(rpmDir, 0755)
-		for _, m := range matches {
-			dest := filepath.Join(rpmDir, filepath.Base(m))
-			copyFile(m, dest)
+
+	if !force {
+		matches, _ := filepath.Glob(filepath.Join(cacheDir, cachePattern))
+		if len(matches) > 0 {
+			fmt.Printf("   📦 命中缓存: 发现 %d 个 RPM (%s)\n", len(matches), comp.Name)
+			// 复制到 RPMS 目录
+			rpmDir := filepath.Join(expandPath(cfg.BuildRoot), "RPMS")
+			os.MkdirAll(rpmDir, 0755)
+			for _, m := range matches {
+				dest := filepath.Join(rpmDir, filepath.Base(m))
+				copyFile(m, dest)
+			}
+			return nil
 		}
-		return nil
+	} else {
+		fmt.Printf("   💪 强制模式: 忽略现有缓存，重新构建...\n")
 	}
 
 	// 1. 准备环境目录

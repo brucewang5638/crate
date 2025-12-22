@@ -21,6 +21,34 @@ func main() {
 	release := flag.Bool("release", false, "生成最终发布包 (包含仓库和安装脚本)")
 	arch := flag.String("arch", "", "覆盖默认架构 (例如: aarch64)")
 	dist := flag.String("dist", "", "覆盖发行版标识 (例如: el7)")
+	force := flag.Bool("force", false, "强制重新构建，忽略缓存")
+
+	// 自定义帮助信息
+	flag.Usage = func() {
+		fmt.Fprintf(flag.CommandLine.Output(), "\n🌟 Crate 构建工具 v0.1\n")
+		fmt.Fprintf(flag.CommandLine.Output(), "用法: %s [选项]\n\n", os.Args[0])
+		fmt.Fprintf(flag.CommandLine.Output(), "选项:\n")
+		flag.PrintDefaults()
+		fmt.Fprintf(flag.CommandLine.Output(), "\n示例:\n")
+		fmt.Fprintf(flag.CommandLine.Output(), "  构建单个组件:\n")
+		fmt.Fprintf(flag.CommandLine.Output(), "     %s -build redis\n", os.Args[0])
+		fmt.Fprintf(flag.CommandLine.Output(), "  强制重新构建 (忽略缓存):\n")
+		fmt.Fprintf(flag.CommandLine.Output(), "     %s -build redis -force\n", os.Args[0])
+		fmt.Fprintf(flag.CommandLine.Output(), "  构建整个组:\n")
+		fmt.Fprintf(flag.CommandLine.Output(), "     %s -build components\n", os.Args[0])
+		fmt.Fprintf(flag.CommandLine.Output(), "  生成发布包:\n")
+		fmt.Fprintf(flag.CommandLine.Output(), "     %s -release\n", os.Args[0])
+		fmt.Fprintf(flag.CommandLine.Output(), "  指定配置文件:\n")
+		fmt.Fprintf(flag.CommandLine.Output(), "     %s -config config_smzjg.yaml -build smzjg\n\n", os.Args[0])
+
+		fmt.Fprintf(flag.CommandLine.Output(), "\n常用工作流 (最佳实践):\n")
+		fmt.Fprintf(flag.CommandLine.Output(), "  🚀 全量构建 (首次运行):\n")
+		fmt.Fprintf(flag.CommandLine.Output(), "     %s -build all\n", os.Args[0])
+		fmt.Fprintf(flag.CommandLine.Output(), "  🔄 服务迭代 (强制刷新服务层):\n")
+		fmt.Fprintf(flag.CommandLine.Output(), "     %s -build services -force\n", os.Args[0])
+		fmt.Fprintf(flag.CommandLine.Output(), "  📦 正式发布 (构建并打包):\n")
+		fmt.Fprintf(flag.CommandLine.Output(), "     %s -build all -release\n\n", os.Args[0])
+	}
 
 	flag.Parse()
 
@@ -43,7 +71,7 @@ func main() {
 
 	// 2. 执行构建任务
 	if *buildTarget != "" {
-		if err := builder.Build(cfg, *buildTarget); err != nil {
+		if err := builder.Build(cfg, *buildTarget, *force); err != nil {
 			fmt.Printf("❌ 构建失败: %v\n", err)
 			os.Exit(1)
 		}
@@ -64,7 +92,7 @@ func main() {
 }
 
 func runRelease(cfg *config.Config) error {
-	releaseName := fmt.Sprintf("%s-%s-%s", cfg.ProjectName, cfg.Dist, time.Now().Format("20060102"))
+	releaseName := fmt.Sprintf("%s-%s-%s-%s", cfg.ProjectName, cfg.Arch, cfg.Dist, time.Now().Format("20000101"))
 	releaseDir := filepath.Join(os.Getenv("HOME"), releaseName)
 
 	fmt.Printf("\n🚀 开始生成发布包: %s\n", releaseName)
