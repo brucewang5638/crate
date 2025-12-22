@@ -10,6 +10,8 @@ crate
 # Test Artifacts
 # 忽略测试生成的临时目录
 mock_src/
+mock_src.bak/
+mock_src.bak/
 rpmbuild_test/
 .rpm_cache_test/
 test-build-*/
