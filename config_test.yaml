@@ -1,0 +1,15 @@
+project_name: "test-build"
+dist_default: "el7"
+cache_dir: ".rpm_cache_test" # Local cache for testing
+build_root: "rpmbuild_test"  # Local build root
+
+components:
+  - name: "redis"
+    version: "6.2.0"
+    type: "infra"
+    spec: "buildrpm/hk-component-redis.spec"
+    source_dir: "mock_src/redis" # 相对路径测试
+    tags: ["infra", "components"]
+
+groups:
+  components: ["infra"]
