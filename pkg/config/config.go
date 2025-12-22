@@ -3,6 +3,7 @@ package config
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 	"runtime"
 
 	"gopkg.in/yaml.v3"
@@ -58,6 +59,22 @@ func Load(path string) (*Config, error) {
 	}
 	if cfg.Dist == "" {
 		cfg.Dist = cfg.DistDefault
+	}
+
+	// 4. 处理相对路径
+	// 如果配置文件路径不是空的，计算它的基础目录
+	if absPath, err := filepath.Abs(path); err == nil {
+		baseDir := filepath.Dir(absPath)
+		for i := range cfg.Components {
+			// 如果 Spec 是相对路径，将其拼接为基于 config 的绝对路径
+			if cfg.Components[i].Spec != "" && !filepath.IsAbs(cfg.Components[i].Spec) {
+				cfg.Components[i].Spec = filepath.Join(baseDir, cfg.Components[i].Spec)
+			}
+			// 如果 SourceDir 是相对路径 (虽然通常推荐绝对路径)，也进行转换
+			if cfg.Components[i].SourceDir != "" && !filepath.IsAbs(cfg.Components[i].SourceDir) {
+				cfg.Components[i].SourceDir = filepath.Join(baseDir, cfg.Components[i].SourceDir)
+			}
+		}
 	}
 
 	return &cfg, nil
