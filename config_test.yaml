@@ -7,7 +7,7 @@ components:
   - name: "redis"
     version: "6.2.0"
     type: "infra"
-    spec: "buildrpm/hk-component-redis.spec"
+    spec: "bak/buildrpm/hk-component-redis.spec"
     source_dir: "mock_src/redis" # 相对路径测试
     tags: ["infra", "components"]
 

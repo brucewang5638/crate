@@ -10,40 +10,41 @@ import (
 	"crate/internal/config"
 )
 
+// Build 执行指定目标的构建流程
 func Build(cfg *config.Config, target string) error {
 	targets, err := cfg.FindComponents(target)
 	if err != nil {
 		return err
 	}
 
-	fmt.Printf("🎯 Building %d components for target '%s'\n", len(targets), target)
+	fmt.Printf("🎯 目标 '%s' 包含 %d 个组件，开始构建...\n", target, len(targets))
 
 	for _, comp := range targets {
 		if err := buildOne(cfg, comp); err != nil {
-			return fmt.Errorf("failed to build %s: %w", comp.Name, err)
+			return fmt.Errorf("构建组件 %s 失败: %w", comp.Name, err)
 		}
 	}
 
 	return nil
 }
 
-// BuildOne handles the lifecycle of a single component build
+// buildOne 处理单个组件的完整生命周期
 func buildOne(cfg *config.Config, comp config.Component) error {
-	fmt.Printf("\n🔧 [Building] %s (v%s)...\n", comp.Name, comp.Version)
+	fmt.Printf("\n🔧 [构建中] %s (v%s)...\n", comp.Name, comp.Version)
 
 	cacheDir := expandPath(cfg.CacheDir)
 	if err := os.MkdirAll(cacheDir, 0755); err != nil {
-		return fmt.Errorf("failed to create cache dir: %w", err)
+		return fmt.Errorf("无法创建缓存目录: %w", err)
 	}
 
-	// 0. Check Cache (Simple pattern matching)
-	// Pattern assumption: hk-component-name-version*.rpm or similar
+	// 0. 检查缓存 (简单模式匹配)
+	// 假设模式: hk-component-name-version*.rpm 或类似
 	// For simplicity, we search for *name-version*.rpm
 	cachePattern := fmt.Sprintf("*%s-%s*.rpm", comp.Name, comp.Version)
 	matches, _ := filepath.Glob(filepath.Join(cacheDir, cachePattern))
 	if len(matches) > 0 {
-		fmt.Printf("   📦 Cache hit: found %d RPMs for %s\n", len(matches), comp.Name)
-		// Copy to RPMS dir
+		fmt.Printf("   📦 命中缓存: 发现 %d 个 RPM (%s)\n", len(matches), comp.Name)
+		// 复制到 RPMS 目录
 		rpmDir := filepath.Join(expandPath(cfg.BuildRoot), "RPMS")
 		os.MkdirAll(rpmDir, 0755)
 		for _, m := range matches {
@@ -53,39 +54,39 @@ func buildOne(cfg *config.Config, comp config.Component) error {
 		return nil
 	}
 
-	// 1. Prepare Environment
+	// 1. 准备环境目录
 	buildRoot := expandPath(cfg.BuildRoot)
 	rpmDirs := []string{"BUILD", "BUILDROOT", "RPMS", "SOURCES", "SPECS", "SRPMS"}
 	for _, d := range rpmDirs {
 		if err := os.MkdirAll(filepath.Join(buildRoot, d), 0755); err != nil {
-			return fmt.Errorf("failed to create dir %s: %w", d, err)
+			return fmt.Errorf("创建目录 %s 失败: %w", d, err)
 		}
 	}
 
-	// 2. Prepare Source (Create Tarball)
+	// 2. 准备源码包 (Create Tarball)
 	if comp.SourceDir != "" {
 		tarName := fmt.Sprintf("%s.tar.gz", comp.Name)
 		tarPath := filepath.Join(buildRoot, "SOURCES", tarName)
 
-		fmt.Printf("   📦 Packing source: %s -> %s\n", comp.SourceDir, tarName)
+		fmt.Printf("   📦 打包源码: %s -> %s\n", comp.SourceDir, tarName)
 		// Assuming createTarball handles errors correctly
 		if err := createTarball(tarPath, comp.SourceDir, comp.Name); err != nil {
-			return fmt.Errorf("failed to pack source: %w", err)
+			return fmt.Errorf("源码打包失败: %w", err)
 		}
 	}
 
-	// 3. Prepare SPEC File
+	// 3. 准备 SPEC 文件
 	specSrc := comp.Spec
 	if specSrc == "" {
-		return fmt.Errorf("spec file not defined for %s", comp.Name)
+		return fmt.Errorf("组件 %s 未定义 spec 文件", comp.Name)
 	}
 	specDest := filepath.Join(buildRoot, "SPECS", filepath.Base(specSrc))
 	if err := copyFile(specSrc, specDest); err != nil {
-		return fmt.Errorf("failed to copy spec: %w", err)
+		return fmt.Errorf("复制 spec 文件失败: %w", err)
 	}
 
-	// 4. Run rpmbuild
-	fmt.Printf("   🔨 Running rpmbuild...\n")
+	// 4. 执行 rpmbuild
+	fmt.Printf("   🔨 执行 rpmbuild...\n")
 	cmd := exec.Command("rpmbuild", "-ba", specDest,
 		"--define", fmt.Sprintf("_topdir %s", buildRoot),
 		"--define", fmt.Sprintf("version %s", comp.Version),
@@ -95,38 +96,38 @@ func buildOne(cfg *config.Config, comp config.Component) error {
 		"--target", cfg.Arch,
 	)
 
+	// 捕获输出用于调试，目前仅在报错时打印
 	output, err := cmd.CombinedOutput()
 	if err != nil {
 		fmt.Println(string(output))
-		return fmt.Errorf("rpmbuild execution failed: %w", err)
+		return fmt.Errorf("rpmbuild 执行失败: %w", err)
 	}
 
-	// 5. Update Cache
-	// Find generated RPMs in RPMS dir and copy to cache
+	// 5. 更新缓存
+	// 查找在 RPMS 目录下生成的新 RPM
 	builtRPMs, _ := filepath.Glob(filepath.Join(buildRoot, "RPMS", cfg.Arch, cachePattern))
-	// Also check noarch
+	// 同时也检查 noarch 目录
 	builtNoarch, _ := filepath.Glob(filepath.Join(buildRoot, "RPMS", "noarch", cachePattern))
 	builtRPMs = append(builtRPMs, builtNoarch...)
 
 	if len(builtRPMs) == 0 {
 		fmt.Println(string(output))
-		return fmt.Errorf("build success but no RPMs found matching %s", cachePattern)
+		return fmt.Errorf("构建看起来成功了，但未找到符合模式 %s 的 RPM 产物", cachePattern)
 	}
 
 	for _, rpm := range builtRPMs {
 		copyFile(rpm, filepath.Join(cacheDir, filepath.Base(rpm)))
 	}
-	fmt.Printf("   ✅ Build success, cached %d RPMs\n", len(builtRPMs))
+	fmt.Printf("   ✅ 构建成功，已缓存 %d 个 RPM\n", len(builtRPMs))
 
 	return nil
 }
 
 func createTarball(tarPath, srcDir, prefix string) error {
-	// Uses 'tar' command for simplicity and speed equivalent to original scripts
+	// 使用 'tar' 命令进行打包，模拟原脚本行为
 	// -C parent_of_srcDir -czf tarPath basename_of_srcDir
-	// Note: The original scripts often tarred specific folders.
-	// The config uses absolute paths. We need to be careful about what directory structure the SPEC expects.
-	// Assumption: SPEC expects the tarball to unzip into a top-level directory named `prefix` (or uses %setup -n)
+	// 注意：我们假设 SPEC 文件期望的解压目录名与源码目录名一致
+	// 如果不一致，可能需要更复杂的 tar 变换逻辑
 
 	// We'll use the parent directory of SourceDir as the context
 	parent := filepath.Dir(srcDir)
@@ -139,7 +140,7 @@ func createTarball(tarPath, srcDir, prefix string) error {
 
 	out, err := cmd.CombinedOutput()
 	if err != nil {
-		return fmt.Errorf("tar failed: %s (%w)", string(out), err)
+		return fmt.Errorf("tar 命令失败: %s (%w)", string(out), err)
 	}
 	return nil
 }

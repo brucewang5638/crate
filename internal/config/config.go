@@ -11,9 +11,9 @@ import (
 type Component struct {
 	Name      string   `yaml:"name"`
 	Version   string   `yaml:"version"`
-	Type      string   `yaml:"type"`
-	Spec      string   `yaml:"spec"`
-	SourceDir string   `yaml:"source_dir"`
+	Type      string   `yaml:"type"`       // 类型: infra, service, app
+	Spec      string   `yaml:"spec"`       // SPEC 文件路径
+	SourceDir string   `yaml:"source_dir"` // 源码目录绝对路径
 	Tags      []string `yaml:"tags"`
 }
 
@@ -26,7 +26,7 @@ type Config struct {
 	Groups      map[string][]string `yaml:"groups"`
 	SystemDeps  []string            `yaml:"system_deps"`
 
-	// Runtime fields
+	// 运行时字段
 	Arch string `yaml:"-"`
 	Dist string `yaml:"-"`
 }
@@ -42,9 +42,9 @@ func Load(path string) (*Config, error) {
 		return nil, err
 	}
 
-	// Set defaults
+	// 设置默认值
 	if cfg.Arch == "" {
-		// Detect architecture
+		// 自动检测架构
 		switch runtime.GOARCH {
 		case "amd64":
 			cfg.Arch = "x86_64"
@@ -61,31 +61,29 @@ func Load(path string) (*Config, error) {
 	return &cfg, nil
 }
 
-// FindComponents expands a target string (group name or component name) into a list of components
+// FindComponents 将目标字符串（组名或组件名）展开为组件列表
 func (c *Config) FindComponents(target string) ([]Component, error) {
-	// 1. Check if it's a group
+	// 1. 检查是否为组名
 	if members, ok := c.Groups[target]; ok {
 		var result []Component
 		for _, m := range members {
-			// Recursive logic isn't strictly needed if groups only contain tags or names
-			// But for now, let's assume groups map to Tags or Names
-			// Strategy: 'members' in group can be other groups or tags or names.
-			// Simplified: Groups map to TAGS or NAMES.
+			// 递归逻辑（如果组包含组）目前暂未实现
+			// 假设组内只包含标签 (Tags) 或组件名 (Name)
 
-			// Try to find components by Name or Tag matching 'm'
+			// 尝试按名称或标签查找组件
 			found := c.findByTagOrName(m)
 			result = append(result, found...)
 		}
 		return unique(result), nil
 	}
 
-	// 2. Check if it's a direct component name
+	// 2. 检查是否为直接的组件名
 	found := c.findByTagOrName(target)
 	if len(found) > 0 {
 		return found, nil
 	}
 
-	return nil, fmt.Errorf("target '%s' not found", target)
+	return nil, fmt.Errorf("未找到目标 '%s'", target)
 }
 
 func (c *Config) findByTagOrName(key string) []Component {
