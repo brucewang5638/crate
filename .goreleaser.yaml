@@ -41,6 +41,12 @@ checksum:
 snapshot:
   name_template: "{{ .Tag }}-next"
 
+release:
+  # 自动检测是否为 Pre-release (基于 tag 是否包含 -rc 等)
+  prerelease: auto
+  # 不要将当前 release 标记为 Latest (保持现有的 Latest 不变)
+  # make_latest: false
+
 changelog:
   sort: asc
   filters:
