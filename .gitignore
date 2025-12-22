@@ -18,7 +18,8 @@ test-build-*/
 # 忽略构建产物
 *.rpm
 *.tar.gz
-repo/
+/repo/
+
 
 # User Specific
 # 忽略用户特定的缓存和配置

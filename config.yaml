@@ -9,6 +9,9 @@ components:
     type: "infra"
     spec: "bak/buildrpm/hk-component-redis.spec"
     source_dir: "mock_src/redis" # 相对路径测试
+    validate_exists:
+      - "dummy_code.c"
+    pre_build: "echo 'Running pre-build' > prebuild.log"
     tags: ["infra", "components"]
 
 groups:

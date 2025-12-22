@@ -18,6 +18,8 @@ components:
     # For procmate, v1 used /opt/hk/procmate_... which is tricky.
     # We might need to adjust this as we implement the builder.
     source_dir: "/opt/hk/procmate_{{version}}_linux_{{arch}}"
+    validate_exists: []
+    pre_build: ""
     tags: ["core"]
 
   # --- Infrastructure (Components) ---
@@ -26,6 +28,8 @@ components:
     type: "infra"
     spec: "specs/hk-component-redis.spec"
     source_dir: "/opt/hk/component/redis"
+    validate_exists: []
+    pre_build: ""
     tags: ["infra", "components"]
 
   - name: "nacos"
@@ -33,6 +37,8 @@ components:
     type: "infra"
     spec: "specs/hk-component-nacos.spec"
     source_dir: "/opt/hk/component/nacos"
+    validate_exists: []
+    pre_build: ""
     tags: ["infra", "components"]
 
   - name: "kafka"
@@ -40,6 +46,8 @@ components:
     type: "infra"
     spec: "specs/hk-component-kafka.spec"
     source_dir: "/opt/hk/component/kafka"
+    validate_exists: []
+    pre_build: ""
     tags: ["infra", "components"]
 
   - name: "elasticsearch"
@@ -47,6 +55,8 @@ components:
     type: "infra"
     spec: "specs/hk-component-elasticsearch.spec"
     source_dir: "/opt/hk/component/elasticsearch"
+    validate_exists: []
+    pre_build: ""
     tags: ["infra", "components"]
 
   - name: "nginx"
@@ -54,6 +64,8 @@ components:
     type: "infra"
     spec: "specs/hk-component-nginx.spec" # Assuming this exists or generic
     source_dir: "/opt/hk/component/nginx"
+    validate_exists: []
+    pre_build: ""
     tags: ["infra", "components"]
 
   - name: "mariadb"
@@ -61,6 +73,8 @@ components:
     type: "infra"
     spec: "specs/hk-component-mariadb.spec" # Assuming exists
     source_dir: "/opt/hk/component/mariadb"
+    validate_exists: []
+    pre_build: ""
     tags: ["infra", "components"]
 
   - name: "common"
@@ -68,6 +82,8 @@ components:
     type: "infra"
     spec: "specs/hk-component-common.spec"
     source_dir: "/opt/hk/component/common"
+    validate_exists: []
+    pre_build: ""
     tags: ["infra", "components"]
 
   # --- Services ---
@@ -78,14 +94,9 @@ components:
     # Service build was gathering multiple folders.
     # We can handle this by customized builder logic or specifying multiple sources if needed.
     # For now, let's point to the base and we can implement mult-dir packing in code.
-    source_dir: "/opt/hk"
-    tags: ["services"]
-
-  - name: "gateway"
-    version: "1.2.0"
-    type: "service"
-    spec: "specs/hk-service-gateway.spec"
-    source_dir: "/opt/hk" # Placeholder
+    source_dir: "/opt/hk/hkservice"
+    validate_exists: []
+    pre_build: ""
     tags: ["services"]
 
 groups:

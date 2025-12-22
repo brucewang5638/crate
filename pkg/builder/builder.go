@@ -37,7 +37,32 @@ func buildOne(cfg *config.Config, comp config.Component) error {
 		return fmt.Errorf("无法创建缓存目录: %w", err)
 	}
 
-	// 0. 检查缓存 (简单模式匹配)
+	// 0.1 基础验证 (SourceDir 必须存在)
+	if comp.SourceDir != "" {
+		if _, err := os.Stat(comp.SourceDir); os.IsNotExist(err) {
+			return fmt.Errorf("❌ 源码目录不存在: %s", comp.SourceDir)
+		}
+		// 0.2 额外文件验证
+		for _, file := range comp.ValidateExists {
+			checkPath := filepath.Join(comp.SourceDir, file)
+			if _, err := os.Stat(checkPath); os.IsNotExist(err) {
+				return fmt.Errorf("❌ 缺少必要文件: %s", checkPath)
+			}
+		}
+	}
+
+	// 0.3 执行预构建脚本 (Pre-Build)
+	if comp.PreBuild != "" {
+		fmt.Printf("   ⚡ 执行预构建脚本: %s\n", comp.PreBuild)
+		cmd := exec.Command("sh", "-c", comp.PreBuild)
+		cmd.Dir = comp.SourceDir // 在源码目录中执行
+		if out, err := cmd.CombinedOutput(); err != nil {
+			fmt.Println(string(out))
+			return fmt.Errorf("预构建脚本失败: %w", err)
+		}
+	}
+
+	// 0.4 检查缓存 (简单模式匹配)
 	// 假设模式: hk-component-name-version*.rpm 或类似
 	// For simplicity, we search for *name-version*.rpm
 	cachePattern := fmt.Sprintf("*%s-%s*.rpm", comp.Name, comp.Version)

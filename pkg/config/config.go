@@ -9,12 +9,14 @@ import (
 )
 
 type Component struct {
-	Name      string   `yaml:"name"`
-	Version   string   `yaml:"version"`
-	Type      string   `yaml:"type"`       // 类型: infra, service, app
-	Spec      string   `yaml:"spec"`       // SPEC 文件路径
-	SourceDir string   `yaml:"source_dir"` // 源码目录绝对路径
-	Tags      []string `yaml:"tags"`
+	Name           string   `yaml:"name"`
+	Version        string   `yaml:"version"`
+	Type           string   `yaml:"type"`            // 类型: infra, service, app
+	Spec           string   `yaml:"spec"`            // SPEC 文件路径
+	SourceDir      string   `yaml:"source_dir"`      // 源码目录绝对路径
+	PreBuild       string   `yaml:"pre_build"`       // [新增] 预构建脚本 (Shell 命令)
+	ValidateExists []string `yaml:"validate_exists"` // [新增] 必须存在的文件列表 (相对 SourceDir)
+	Tags           []string `yaml:"tags"`
 }
 
 type Config struct {
