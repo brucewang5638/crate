@@ -13,6 +13,7 @@ type Component struct {
 	Name           string   `yaml:"name"`
 	Version        string   `yaml:"version"`
 	Type           string   `yaml:"type"`            // 类型: infra, service, app
+	Enabled        *bool    `yaml:"enabled"`         // [新增] 是否启用构建 (默认: true)
 	Spec           string   `yaml:"spec"`            // SPEC 文件路径
 	SourceDir      string   `yaml:"source_dir"`      // 源码目录绝对路径
 	PreBuild       string   `yaml:"pre_build"`       // [新增] 预构建脚本 (Shell 命令)
@@ -66,6 +67,12 @@ func Load(path string) (*Config, error) {
 	if absPath, err := filepath.Abs(path); err == nil {
 		baseDir := filepath.Dir(absPath)
 		for i := range cfg.Components {
+			// 默认 Enabled 为 true
+			if cfg.Components[i].Enabled == nil {
+				defaultEnabled := true
+				cfg.Components[i].Enabled = &defaultEnabled
+			}
+
 			// 如果 Spec 是相对路径，将其拼接为基于 config 的绝对路径
 			if cfg.Components[i].Spec != "" && !filepath.IsAbs(cfg.Components[i].Spec) {
 				cfg.Components[i].Spec = filepath.Join(baseDir, cfg.Components[i].Spec)
@@ -84,7 +91,13 @@ func Load(path string) (*Config, error) {
 func (c *Config) FindComponents(target string) ([]Component, error) {
 	// 0. 特殊关键字: all
 	if target == "all" {
-		return c.Components, nil
+		var active []Component
+		for _, comp := range c.Components {
+			if comp.Enabled != nil && *comp.Enabled {
+				active = append(active, comp)
+			}
+		}
+		return active, nil
 	}
 
 	// 1. 检查是否为组名
@@ -113,10 +126,18 @@ func (c *Config) FindComponents(target string) ([]Component, error) {
 func (c *Config) findByTagOrName(key string) []Component {
 	var result []Component
 	for _, comp := range c.Components {
+		// 1. 如果是直接通过 Name 精确匹配，即使 Disabled 也允许构建 (显式调用)
 		if comp.Name == key {
 			result = append(result, comp)
 			continue
 		}
+
+		// 2. 如果是通过 Tags 查找，则必须检查 Enabled 状态
+		// 跳过未启用的组件
+		if comp.Enabled != nil && !*comp.Enabled {
+			continue
+		}
+
 		for _, t := range comp.Tags {
 			if t == key {
 				result = append(result, comp)
