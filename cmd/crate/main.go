@@ -77,10 +77,10 @@ func runRelease(cfg *config.Config) error {
 	// 2. 汇聚 RPM (从缓存或构建目录)
 	// 这里我们假设所有需要的 RPM 已经在缓存中 (前提是用户先跑了 --build all 或者之前的构建)
 	// 或者，我们应该从 RPMS 目录收集?
-	// 简单策略: 从缓存目录收集所有符合当前架构的 RPM 到 releaseDir/hk-repo
+	// 简单策略: 从缓存目录收集所有符合当前架构的 RPM 到 releaseDir/repo
 	// 但 repo.Generate 期望的是一个目录。
-	// 让我们把 RPM 复制到 releaseDir/hk-repo
-	repoDir := filepath.Join(releaseDir, "hk-repo")
+	// 让我们把 RPM 复制到 releaseDir/repo
+	repoDir := filepath.Join(releaseDir, "repo")
 	if err := os.MkdirAll(repoDir, 0755); err != nil {
 		return err
 	}

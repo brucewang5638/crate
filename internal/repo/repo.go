@@ -11,7 +11,7 @@ import (
 
 // Generate 生成离线 YUM 仓库
 func Generate(cfg *config.Config, releaseDir string) error {
-	repoDir := filepath.Join(releaseDir, "hk-repo")
+	repoDir := filepath.Join(releaseDir, "repo")
 	if err := os.MkdirAll(repoDir, 0755); err != nil {
 		return err
 	}
@@ -49,7 +49,7 @@ func createSetupScript(releaseDir string) error {
 	content := `#!/bin/bash
 set -e
 CUR_DIR="$(cd "$(dirname "$0")"; pwd)"
-REPO_PATH="${CUR_DIR}/hk-repo"
+REPO_PATH="${CUR_DIR}/repo"
 
 echo "Configuring local repo..."
 cat > /etc/yum.repos.d/hk-local.repo <<EOR

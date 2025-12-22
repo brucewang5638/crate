@@ -10,8 +10,6 @@ crate
 # Test Artifacts
 # 忽略测试生成的临时目录
 mock_src/
-mock_src.bak/
-mock_src.bak/
 rpmbuild_test/
 .rpm_cache_test/
 test-build-*/
@@ -20,7 +18,7 @@ test-build-*/
 # 忽略构建产物
 *.rpm
 *.tar.gz
-hk-repo/
+repo/
 
 # User Specific
 # 忽略用户特定的缓存和配置
