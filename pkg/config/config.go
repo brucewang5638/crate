@@ -75,6 +75,11 @@ func Load(path string) (*Config, error) {
 				cfg.Components[i].Enabled = &defaultEnabled
 			}
 
+			// 默认 Edition 为 "1"
+			if cfg.Components[i].Edition == "" {
+				cfg.Components[i].Edition = "1"
+			}
+
 			// 如果 Spec 是相对路径，将其拼接为基于 config 的绝对路径
 			if cfg.Components[i].Spec != "" && !filepath.IsAbs(cfg.Components[i].Spec) {
 				cfg.Components[i].Spec = filepath.Join(baseDir, cfg.Components[i].Spec)

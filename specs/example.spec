@@ -16,7 +16,8 @@
 # [Static Name] 明确指定生成的 RPM 包名
 Name:           example-component
 Version:        %{version}
-Release:        1%{?dist}
+# [修改] 使用 edition 宏，如果未定义则默认为 1
+Release:        %{?edition}%{!?edition:1}%{?dist}
 Summary:        这是一个 Crate 构建工具的示例构建块
 
 License:        Proprietary

@@ -30,7 +30,7 @@ func Build(cfg *config.Config, target string, force bool) error {
 
 // buildOne 处理单个构建块的完整生命周期
 func buildOne(cfg *config.Config, comp config.Component, force bool) error {
-	fmt.Printf("\n🔧 [构建中] %s (v%s)...\n", comp.Name, comp.Version)
+	fmt.Printf("\n🔧 [构建中] %s-%s (v%s)...\n", comp.Name, comp.Edition, comp.Version)
 
 	cacheDir := expandPath(cfg.CacheDir)
 	if err := os.MkdirAll(cacheDir, 0755); err != nil {
@@ -62,10 +62,10 @@ func buildOne(cfg *config.Config, comp config.Component, force bool) error {
 		}
 	}
 
-	// 0.4 检查缓存 (简单模式匹配)
-	// 假设模式: name-version*.rpm 或类似
-	// For simplicity, we search for *name-version*.rpm
-	cachePattern := fmt.Sprintf("*%s-%s*.rpm", comp.Name, comp.Version)
+	// 0.4 检查缓存
+	// 匹配模式: name-version-edition*.rpm
+	// 这样可以区分 edition (例如 core vs pro)
+	cachePattern := fmt.Sprintf("%s-%s-%s*.rpm", comp.Name, comp.Version, comp.Edition)
 
 	if !force {
 		matches, _ := filepath.Glob(filepath.Join(cacheDir, cachePattern))
@@ -124,22 +124,17 @@ func buildOne(cfg *config.Config, comp config.Component, force bool) error {
 		"--define", fmt.Sprintf("version %s", comp.Version),
 		"--define", fmt.Sprintf("dist .%s", cfg.Dist),
 		"--define", fmt.Sprintf("comp_name %s", comp.Name),
+		"--define", fmt.Sprintf("edition %s", comp.Edition), // 使用 comp.Edition
 		"--target", cfg.Arch,
-	}
-
-	if comp.Edition != "" {
-		args = append(args, "--define", fmt.Sprintf("edition %s", comp.Edition))
-	} else {
-		// 默认 edition 为 1
-		args = append(args, "--define", "edition 1")
 	}
 
 	cmd := exec.Command("rpmbuild", args...)
 
-	// 捕获输出用于调试，目前仅在报错时打印
-	output, err := cmd.CombinedOutput()
-	if err != nil {
-		fmt.Println(string(output))
+	// 将输出重定向到标准输出，以便用户看到此时此刻的进度 (避免"卡死"假象)
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+
+	if err := cmd.Run(); err != nil {
 		return fmt.Errorf("rpmbuild 执行失败: %w", err)
 	}
 
@@ -151,7 +146,6 @@ func buildOne(cfg *config.Config, comp config.Component, force bool) error {
 	builtRPMs = append(builtRPMs, builtNoarch...)
 
 	if len(builtRPMs) == 0 {
-		fmt.Println(string(output))
 		return fmt.Errorf("构建看起来成功了，但未找到符合模式 %s 的 RPM 产物", cachePattern)
 	}
 
