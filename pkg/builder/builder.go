@@ -117,7 +117,6 @@ func buildOne(cfg *config.Config, comp config.Component) error {
 		"--define", fmt.Sprintf("version %s", comp.Version),
 		"--define", fmt.Sprintf("dist .%s", cfg.Dist),
 		"--define", fmt.Sprintf("comp_name %s", comp.Name),
-		"--define", fmt.Sprintf("pkg_name %s", comp.Name),
 		"--target", cfg.Arch,
 	)
 

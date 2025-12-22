@@ -77,15 +77,6 @@ components:
     pre_build: ""
     tags: ["infra", "components"]
 
-  - name: "common"
-    version: "1.0.0"
-    type: "infra"
-    spec: "specs/hk-component-common.spec"
-    source_dir: "/opt/hk/component/common"
-    validate_exists: []
-    pre_build: ""
-    tags: ["infra", "components"]
-
   # --- Services ---
   - name: "smzjg"
     version: "1.0.0"
