@@ -117,13 +117,24 @@ func buildOne(cfg *config.Config, comp config.Component, force bool) error {
 
 	// 4. 执行 rpmbuild
 	fmt.Printf("   🔨 执行 rpmbuild...\n")
-	cmd := exec.Command("rpmbuild", "-ba", specDest,
+
+	args := []string{
+		"-ba", specDest,
 		"--define", fmt.Sprintf("_topdir %s", buildRoot),
 		"--define", fmt.Sprintf("version %s", comp.Version),
 		"--define", fmt.Sprintf("dist .%s", cfg.Dist),
 		"--define", fmt.Sprintf("comp_name %s", comp.Name),
 		"--target", cfg.Arch,
-	)
+	}
+
+	if comp.Edition != "" {
+		args = append(args, "--define", fmt.Sprintf("edition %s", comp.Edition))
+	} else {
+		// 默认 edition 为 1
+		args = append(args, "--define", "edition 1")
+	}
+
+	cmd := exec.Command("rpmbuild", args...)
 
 	// 捕获输出用于调试，目前仅在报错时打印
 	output, err := cmd.CombinedOutput()

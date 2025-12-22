@@ -13,12 +13,13 @@ type Component struct {
 	Name           string   `yaml:"name"`
 	Version        string   `yaml:"version"`
 	Type           string   `yaml:"type"`            // 类型: infra, service, app
-	Enabled        *bool    `yaml:"enabled"`         // [新增] 是否启用构建 (默认: true)
+	Enabled        *bool    `yaml:"enabled"`         // 是否启用构建 (默认: true)
+	Edition        string   `yaml:"edition"`         // [新增] 版本标识 (Release/Variant)，如 "1", "core", "pro"
 	Spec           string   `yaml:"spec"`            // SPEC 文件路径
 	SourceDir      string   `yaml:"source_dir"`      // 源码目录绝对路径
-	Includes       []string `yaml:"includes"`        // [新增] 仅打包指定的子文件/目录 (相对 SourceDir)
-	PreBuild       string   `yaml:"pre_build"`       // [新增] 预构建脚本 (Shell 命令)
-	ValidateExists []string `yaml:"validate_exists"` // [新增] 必须存在的文件列表 (相对 SourceDir)
+	Includes       []string `yaml:"includes"`        // 仅打包指定的子文件/目录 (相对 SourceDir)
+	PreBuild       string   `yaml:"pre_build"`       // 预构建脚本 (Shell 命令)
+	ValidateExists []string `yaml:"validate_exists"` // 必须存在的文件列表 (相对 SourceDir)
 	Tags           []string `yaml:"tags"`
 }
 
