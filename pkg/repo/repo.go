@@ -104,21 +104,18 @@ CUR_DIR="$(cd "$(dirname "$0")"; pwd)"
 REPO_PATH="${CUR_DIR}/repo"
 
 echo "Configuring local repo..."
-cat > /etc/yum.repos.d/hk-local.repo <<EOR
-[hk-local]
-name=HK_Offline_Repository
+cat > /etc/yum.repos.d/local.repo <<EOR
+[local]
+name=Offline_Repository
 baseurl=file://$REPO_PATH
 enabled=1
 gpgcheck=0
 EOR
 
 yum clean all
-yum makecache --disablerepo=* --enablerepo=hk-local
+yum makecache --disablerepo=* --enablerepo=local
 
-echo "Installing services..."
-yum install -y hk-service-smzjg --disablerepo=* --enablerepo=hk-local
-
-echo "Done!"
+echo "Done! Please setup your services manually."
 `
 	if err := os.WriteFile(scriptPath, []byte(content), 0755); err != nil {
 		return err

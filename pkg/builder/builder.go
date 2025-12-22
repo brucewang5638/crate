@@ -63,7 +63,7 @@ func buildOne(cfg *config.Config, comp config.Component, force bool) error {
 	}
 
 	// 0.4 检查缓存 (简单模式匹配)
-	// 假设模式: hk-component-name-version*.rpm 或类似
+	// 假设模式: name-version*.rpm 或类似
 	// For simplicity, we search for *name-version*.rpm
 	cachePattern := fmt.Sprintf("*%s-%s*.rpm", comp.Name, comp.Version)
 

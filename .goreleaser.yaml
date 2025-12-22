@@ -32,7 +32,8 @@ archives:
     # 将额外的文件包含进最终的压缩包中
     files:
       - specs
-      - config_smzjg.yaml
+      - config.yaml
+      - README.md
 
 checksum:
   name_template: 'checksums.txt'

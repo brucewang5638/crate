@@ -1,18 +1,44 @@
-project_name: "test-build"
-dist_default: "el7"
-cache_dir: ".rpm_cache_test" # Local cache for testing
-build_root: "rpmbuild_test"  # Local build root
+# =========================================================
+# Crate Configuration Example
+# =========================================================
 
-components:
-  - name: "redis"
-    version: "6.2.0"
-    type: "infra"
-    spec: "bak/buildrpm/hk-component-redis.spec"
-    source_dir: "mock_src/redis" # 相对路径测试
-    validate_exists:
-      - "dummy_code.c"
-    pre_build: "echo 'Running pre-build' > prebuild.log"
-    tags: ["infra", "components"]
+project_name: "my-project"
+dist_default: "el7"         # 默认发行版标识 (会附加到 rpm release 字段, 如 .el7)
+cache_dir: "~/.rpm_cache"   # 构建成功的 RPM 缓存路径
+build_root: "~/rpmbuild"    # rpmbuild 的临时工作空间
 
+# --- 系统依赖 ---
+# 在使用 -release 时，会自动通过 repotrack/dnf 下载这些包及其依赖到仓库中
+system_deps:
+  - "nginx"
+  - "mariadb-server"
+  - "redis"
+  - "java-1.8.0-openjdk"
+
+# --- 分组定义 ---
+# 允许通过 -build infra 一次性构建多个组件
 groups:
-  components: ["infra"]
+  infra: ["redis", "mysql", "nginx"]
+  backend: ["api-server", "worker"]
+  all_services: ["example", "api-server"]
+
+# --- 组件定义 ---
+components:
+  - name: "example"                   # 组件唯一标识 (comp_name)
+    version: "1.0.0"                  # 版本号
+    type: "service"                   # 类型 (仅做标记，暂不影响构建逻辑)
+    spec: "specs/example.spec"        # SPEC 文件路径
+    source_dir: "/home/user/code/src" # 源码绝对路径
+
+    # [标签] 可用于灵活筛选，例如 -build infra
+    tags: ["demo", "example"]
+
+    # [可选] 预构建验证
+    # 构建前检查这些文件是否存在 (相对 source_dir)
+    validate_exists:
+      - "Makefile"
+      - "README.md"
+
+    # [可选] 预构建脚本
+    # 在 source_dir 下执行的 Shell 命令 (如清理, 编译前端资源等)
+    pre_build: "echo 'Pre-building example...' && make clean"
