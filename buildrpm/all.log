@@ -1,0 +1,489 @@
+nohup: 忽略输入
+==========================================
+🌟 HK-SMZJG 智能发布系统
+==========================================
+📋 构建配置:
+   架构: x86_64
+   发行版: el7
+   版本: procmate=1.5.3, components=1.0.0, services=1.0.0
+==========================================
+
+🔨 模式: 智能构建模式 (支持缓存复用)
+
+🔧 正在重新构建组件: procmate
+   参数: ARCH=x86_64, DIST=el7, VERSION=1.5.3
+==========================================
+🔧 Procmate 构建配置
+==========================================
+  组件名称: procmate
+  版本号: 1.5.3
+  系统架构: x86_64
+  发行版: el7
+  源码路径: /opt/hk/procmate_1.5.3_linux_amd64
+==========================================
+
+🧹 正在初始化构建环境...
+--------------------------------------------
+📦 阶段 1: 准备源码包 -> procmate
+✅ 源码包已就绪
+🔨 阶段 2: 构建 RPM 包 -> procmate
+构建目标平台：x86_64
+为目标x86_64构建
+执行(%prep): /bin/sh -e /var/tmp/rpm-tmp.3cEDqO
++ umask 022
++ cd /root/rpmbuild/BUILD
++ cd /root/rpmbuild/BUILD
++ rm -rf procmate-1.5.3
++ /usr/bin/mkdir -p procmate-1.5.3
++ cd procmate-1.5.3
++ /usr/bin/gzip -dc /root/rpmbuild/SOURCES/procmate.tar.gz
++ /usr/bin/tar -xf -
++ STATUS=0
++ '[' 0 -ne 0 ']'
++ /usr/bin/chmod -Rf a+rX,u+w,g-w,o-w .
++ exit 0
+执行(%install): /bin/sh -e /var/tmp/rpm-tmp.YvU2kw
++ umask 022
++ cd /root/rpmbuild/BUILD
++ '[' /root/rpmbuild/BUILDROOT/procmate-1.5.3-1.el7.x86_64 '!=' / ']'
++ rm -rf /root/rpmbuild/BUILDROOT/procmate-1.5.3-1.el7.x86_64
+++ dirname /root/rpmbuild/BUILDROOT/procmate-1.5.3-1.el7.x86_64
++ mkdir -p /root/rpmbuild/BUILDROOT
++ mkdir /root/rpmbuild/BUILDROOT/procmate-1.5.3-1.el7.x86_64
++ cd procmate-1.5.3
++ rm -rf /root/rpmbuild/BUILDROOT/procmate-1.5.3-1.el7.x86_64
++ install -d -m 755 /root/rpmbuild/BUILDROOT/procmate-1.5.3-1.el7.x86_64/opt/procmate
++ install -d -m 755 /root/rpmbuild/BUILDROOT/procmate-1.5.3-1.el7.x86_64/usr/local/bin
++ install -d -m 755 /root/rpmbuild/BUILDROOT/procmate-1.5.3-1.el7.x86_64/etc/procmate/conf.d
++ install -d -m 755 /root/rpmbuild/BUILDROOT/procmate-1.5.3-1.el7.x86_64/etc/systemd/system
++ install -p -m 755 procmate /root/rpmbuild/BUILDROOT/procmate-1.5.3-1.el7.x86_64/opt/procmate/procmate
++ ln -sf /opt/procmate/procmate /root/rpmbuild/BUILDROOT/procmate-1.5.3-1.el7.x86_64/usr/local/bin/procmate
++ install -p -m 644 config.yaml /root/rpmbuild/BUILDROOT/procmate-1.5.3-1.el7.x86_64/etc/procmate/config.yaml
++ /usr/lib/rpm/check-buildroot
++ /usr/lib/rpm/redhat/brp-compress
++ /usr/lib/rpm/redhat/brp-strip /usr/bin/strip
++ /usr/lib/rpm/redhat/brp-strip-comment-note /usr/bin/strip /usr/bin/objdump
++ /usr/lib/rpm/redhat/brp-strip-static-archive /usr/bin/strip
++ /usr/lib/rpm/brp-python-bytecompile /usr/bin/python 1
++ /usr/lib/rpm/redhat/brp-python-hardlink
++ /usr/lib/rpm/redhat/brp-java-repack-jars
+处理文件：procmate-1.5.3-1.el7.x86_64
+Provides: config(procmate) = 1.5.3-1.el7 procmate = 1.5.3-1.el7 procmate(x86-64) = 1.5.3-1.el7
+Requires(interp): /bin/sh /bin/sh
+Requires(rpmlib): rpmlib(CompressedFileNames) <= 3.0.4-1 rpmlib(FileDigests) <= 4.6.0-1 rpmlib(PayloadFilesHavePrefix) <= 4.0-1
+Requires(post): /bin/sh
+Requires(preun): /bin/sh
+检查未打包文件：/usr/lib/rpm/check-files /root/rpmbuild/BUILDROOT/procmate-1.5.3-1.el7.x86_64
+写道:/root/rpmbuild/SRPMS/procmate-1.5.3-1.el7.src.rpm
+写道:/root/rpmbuild/RPMS/x86_64/procmate-1.5.3-1.el7.x86_64.rpm
+执行(%clean): /bin/sh -e /var/tmp/rpm-tmp.1jzFyJ
++ umask 022
++ cd /root/rpmbuild/BUILD
++ cd procmate-1.5.3
++ rm -rf /root/rpmbuild/BUILDROOT/procmate-1.5.3-1.el7.x86_64exit 0
+--------------------------------------------
+🎉 Procmate RPM 构建成功
+📍 RPM 位置:
+-rw-r--r--. 1 root root 2.3M 12月 19 16:17 /root/rpmbuild/RPMS/x86_64/procmate-1.5.3-1.el7.x86_64.rpm
+   ✅ procmate 构建完成并已更新缓存
+
+🔧 正在重新构建组件: components
+   参数: ARCH=x86_64, DIST=el7, VERSION=1.0.0
+==========================================
+🔧 中间件组件智能构建系统
+==========================================
+  目标组件: redis nacos kafka elasticsearch nginx
+  版本号: 1.0.0
+  系统架构: x86_64
+  源码路径: /opt/hk/component
+==========================================
+
+🧹 正在初始化构建环境...
+📄 发现专用 SPEC: hk-component-elasticsearch.spec
+📄 发现专用 SPEC: hk-component-redis.spec
+🚀 开始批量构建任务...
+
+--------------------------------------------
+▶️  正在处理组件: [ redis ]
+📦 阶段 1: 封装源码包 -> redis.tar.gz
+🎯 策略: 使用【专用 SPEC】 -> hk-component-redis.spec
+🔨 阶段 3: 执行构建...
+构建目标平台：x86_64
+为目标x86_64构建
+执行(%prep): /bin/sh -e /var/tmp/rpm-tmp.XU76Bh
++ umask 022
++ cd /root/rpmbuild/BUILD
++ cd /root/rpmbuild/BUILD
++ rm -rf redis
++ /usr/bin/gzip -dc /root/rpmbuild/SOURCES/redis.tar.gz
++ /usr/bin/tar -xf -
++ STATUS=0
++ '[' 0 -ne 0 ']'
++ cd redis
++ /usr/bin/chmod -Rf a+rX,u+w,g-w,o-w .
++ exit 0
+执行(%install): /bin/sh -e /var/tmp/rpm-tmp.kRvY48
++ umask 022
++ cd /root/rpmbuild/BUILD
++ '[' /root/rpmbuild/BUILDROOT/hk-component-redis-1.0.0-1.el7.x86_64 '!=' / ']'
++ rm -rf /root/rpmbuild/BUILDROOT/hk-component-redis-1.0.0-1.el7.x86_64
+++ dirname /root/rpmbuild/BUILDROOT/hk-component-redis-1.0.0-1.el7.x86_64
++ mkdir -p /root/rpmbuild/BUILDROOT
++ mkdir /root/rpmbuild/BUILDROOT/hk-component-redis-1.0.0-1.el7.x86_64
++ cd redis
++ rm -rf /root/rpmbuild/BUILDROOT/hk-component-redis-1.0.0-1.el7.x86_64
++ install -d -m 755 /root/rpmbuild/BUILDROOT/hk-component-redis-1.0.0-1.el7.x86_64/opt/hk/component/redis
++ cp -a bin /root/rpmbuild/BUILDROOT/hk-component-redis-1.0.0-1.el7.x86_64/opt/hk/component/redis/
++ /usr/lib/rpm/check-buildroot
+处理文件：hk-component-redis-1.0.0-1.el7.x86_64
+正在查找 Provides：/usr/lib/rpm/redhat/find-provides
+正在查找 Requires(interp)：
+正在查找 Requires(rpmlib)：
+正在查找 Requires(verify)：
+正在查找 Requires(pre)：
+正在查找 Requires(post)：
+正在查找 Requires(preun)：
+正在查找 Requires(postun)：
+正在查找 Requires(pretrans)：
+正在查找 Requires(posttrans)：
+正在查找 Requires：/usr/lib/rpm/redhat/find-requires
+Provides: hk-component-redis = 1.0.0-1.el7 hk-component-redis(x86-64) = 1.0.0-1.el7
+Requires(interp): /bin/sh
+Requires(rpmlib): rpmlib(FileDigests) <= 4.6.0-1 rpmlib(PayloadFilesHavePrefix) <= 4.0-1 rpmlib(CompressedFileNames) <= 3.0.4-1
+Requires(post): /bin/sh
+Requires: /bin/sh
+检查未打包文件：/usr/lib/rpm/check-files /root/rpmbuild/BUILDROOT/hk-component-redis-1.0.0-1.el7.x86_64
+写道:/root/rpmbuild/SRPMS/hk-component-redis-1.0.0-1.el7.src.rpm
+写道:/root/rpmbuild/RPMS/x86_64/hk-component-redis-1.0.0-1.el7.x86_64.rpm
+执行(%clean): /bin/sh -e /var/tmp/rpm-tmp.bh6Eg1
++ umask 022
++ cd /root/rpmbuild/BUILD
++ cd redis
++ rm -rf /root/rpmbuild/BUILDROOT/hk-component-redis-1.0.0-1.el7.x86_64
++ exit 0
+✅ 组件 redis 构建成功
+
+--------------------------------------------
+▶️  正在处理组件: [ nacos ]
+📦 阶段 1: 封装源码包 -> nacos.tar.gz
+🔄 策略: 使用【通用 SPEC】 -> hk-component-generic.spec
+🔨 阶段 3: 执行构建...
+构建目标平台：x86_64
+为目标x86_64构建
+执行(%prep): /bin/sh -e /var/tmp/rpm-tmp.RfG6vo
++ umask 022
++ cd /root/rpmbuild/BUILD
++ cd /root/rpmbuild/BUILD
++ rm -rf nacos
++ /usr/bin/tar -xf -
++ /usr/bin/gzip -dc /root/rpmbuild/SOURCES/nacos.tar.gz
++ STATUS=0
++ '[' 0 -ne 0 ']'
++ cd nacos
++ /usr/bin/chmod -Rf a+rX,u+w,g-w,o-w .
++ exit 0
+执行(%install): /bin/sh -e /var/tmp/rpm-tmp.27XzFD
++ umask 022
++ cd /root/rpmbuild/BUILD
++ '[' /root/rpmbuild/BUILDROOT/hk-component-nacos-1.0.0-1.el7.x86_64 '!=' / ']'
++ rm -rf /root/rpmbuild/BUILDROOT/hk-component-nacos-1.0.0-1.el7.x86_64
+++ dirname /root/rpmbuild/BUILDROOT/hk-component-nacos-1.0.0-1.el7.x86_64
++ mkdir -p /root/rpmbuild/BUILDROOT
++ mkdir /root/rpmbuild/BUILDROOT/hk-component-nacos-1.0.0-1.el7.x86_64
++ cd nacos
++ rm -rf /root/rpmbuild/BUILDROOT/hk-component-nacos-1.0.0-1.el7.x86_64
++ install -d -m 755 /root/rpmbuild/BUILDROOT/hk-component-nacos-1.0.0-1.el7.x86_64/opt/hk/component/nacos
++ cp -a LICENSE NOTICE bin conf data target work /root/rpmbuild/BUILDROOT/hk-component-nacos-1.0.0-1.el7.x86_64/opt/hk/component/nacos/
++ /usr/lib/rpm/check-buildroot
++ /usr/lib/rpm/redhat/brp-compress
++ /usr/lib/rpm/redhat/brp-strip /bin/true
++ /usr/lib/rpm/redhat/brp-strip-comment-note /bin/true /usr/bin/objdump
++ /usr/lib/rpm/redhat/brp-strip-static-archive /bin/true
++ /usr/lib/rpm/brp-python-bytecompile /usr/bin/python 1
++ /usr/lib/rpm/redhat/brp-python-hardlink
+处理文件：hk-component-nacos-1.0.0-1.el7.x86_64
+正在查找 Provides：
+正在查找 Requires(interp)：
+正在查找 Requires(rpmlib)：
+正在查找 Requires(verify)：
+正在查找 Requires(pre)：
+正在查找 Requires(post)：
+正在查找 Requires(preun)：
+正在查找 Requires(postun)：
+正在查找 Requires(pretrans)：
+正在查找 Requires(posttrans)：
+正在查找 Requires：
+Provides: hk-component-nacos = 1.0.0-1.el7 hk-component-nacos(x86-64) = 1.0.0-1.el7
+Requires(interp): /bin/sh /bin/sh
+Requires(rpmlib): rpmlib(FileDigests) <= 4.6.0-1 rpmlib(PayloadFilesHavePrefix) <= 4.0-1 rpmlib(CompressedFileNames) <= 3.0.4-1
+Requires(post): /bin/sh
+Requires(postun): /bin/sh
+检查未打包文件：/usr/lib/rpm/check-files /root/rpmbuild/BUILDROOT/hk-component-nacos-1.0.0-1.el7.x86_64
+写道:/root/rpmbuild/SRPMS/hk-component-nacos-1.0.0-1.el7.src.rpm
+写道:/root/rpmbuild/RPMS/x86_64/hk-component-nacos-1.0.0-1.el7.x86_64.rpm
+执行(%clean): /bin/sh -e /var/tmp/rpm-tmp.5L2lad
++ umask 022
++ cd /root/rpmbuild/BUILD
++ cd nacos
++ rm -rf /root/rpmbuild/BUILDROOT/hk-component-nacos-1.0.0-1.el7.x86_64
++ exit 0
+✅ 组件 nacos 构建成功
+
+--------------------------------------------
+▶️  正在处理组件: [ kafka ]
+📦 阶段 1: 封装源码包 -> kafka.tar.gz
+🔄 策略: 使用【通用 SPEC】 -> hk-component-generic.spec
+🔨 阶段 3: 执行构建...
+构建目标平台：x86_64
+为目标x86_64构建
+执行(%prep): /bin/sh -e /var/tmp/rpm-tmp.aUZqP1
++ umask 022
++ cd /root/rpmbuild/BUILD
++ cd /root/rpmbuild/BUILD
++ rm -rf kafka
++ /usr/bin/tar -xf -
++ /usr/bin/gzip -dc /root/rpmbuild/SOURCES/kafka.tar.gz
++ STATUS=0
++ '[' 0 -ne 0 ']'
++ cd kafka
++ /usr/bin/chmod -Rf a+rX,u+w,g-w,o-w .
++ exit 0
+执行(%install): /bin/sh -e /var/tmp/rpm-tmp.QyFGVU
++ umask 022
++ cd /root/rpmbuild/BUILD
++ '[' /root/rpmbuild/BUILDROOT/hk-component-kafka-1.0.0-1.el7.x86_64 '!=' / ']'
++ rm -rf /root/rpmbuild/BUILDROOT/hk-component-kafka-1.0.0-1.el7.x86_64
+++ dirname /root/rpmbuild/BUILDROOT/hk-component-kafka-1.0.0-1.el7.x86_64
++ mkdir -p /root/rpmbuild/BUILDROOT
++ mkdir /root/rpmbuild/BUILDROOT/hk-component-kafka-1.0.0-1.el7.x86_64
++ cd kafka
++ rm -rf /root/rpmbuild/BUILDROOT/hk-component-kafka-1.0.0-1.el7.x86_64
++ install -d -m 755 /root/rpmbuild/BUILDROOT/hk-component-kafka-1.0.0-1.el7.x86_64/opt/hk/component/kafka
++ cp -a LICENSE NOTICE bin config kafka-server.sh kafka-watch.sh kafka.service libs nohup.out site-docs wait-for-it.sh zookeeper /root/rpmbuild/BUILDROOT/hk-component-kafka-1.0.0-1.el7.x86_64/opt/hk/component/kafka/
++ /usr/lib/rpm/check-buildroot
++ /usr/lib/rpm/redhat/brp-compress
++ /usr/lib/rpm/redhat/brp-strip /bin/true
++ /usr/lib/rpm/redhat/brp-strip-comment-note /bin/true /usr/bin/objdump
++ /usr/lib/rpm/redhat/brp-strip-static-archive /bin/true
++ /usr/lib/rpm/brp-python-bytecompile /usr/bin/python 1
++ /usr/lib/rpm/redhat/brp-python-hardlink
+处理文件：hk-component-kafka-1.0.0-1.el7.x86_64
+正在查找 Provides：
+正在查找 Requires(interp)：
+正在查找 Requires(rpmlib)：
+正在查找 Requires(verify)：
+正在查找 Requires(pre)：
+正在查找 Requires(post)：
+正在查找 Requires(preun)：
+正在查找 Requires(postun)：
+正在查找 Requires(pretrans)：
+正在查找 Requires(posttrans)：
+正在查找 Requires：
+Provides: hk-component-kafka = 1.0.0-1.el7 hk-component-kafka(x86-64) = 1.0.0-1.el7
+Requires(interp): /bin/sh /bin/sh
+Requires(rpmlib): rpmlib(FileDigests) <= 4.6.0-1 rpmlib(PayloadFilesHavePrefix) <= 4.0-1 rpmlib(CompressedFileNames) <= 3.0.4-1
+Requires(post): /bin/sh
+Requires(postun): /bin/sh
+检查未打包文件：/usr/lib/rpm/check-files /root/rpmbuild/BUILDROOT/hk-component-kafka-1.0.0-1.el7.x86_64
+写道:/root/rpmbuild/SRPMS/hk-component-kafka-1.0.0-1.el7.src.rpm
+写道:/root/rpmbuild/RPMS/x86_64/hk-component-kafka-1.0.0-1.el7.x86_64.rpm
+执行(%clean): /bin/sh -e /var/tmp/rpm-tmp.q3Icv6
++ umask 022
++ cd /root/rpmbuild/BUILD
++ cd kafka
++ rm -rf /root/rpmbuild/BUILDROOT/hk-component-kafka-1.0.0-1.el7.x86_64
++ exit 0
+✅ 组件 kafka 构建成功
+
+--------------------------------------------
+▶️  正在处理组件: [ elasticsearch ]
+📦 阶段 1: 封装源码包 -> elasticsearch.tar.gz
+🎯 策略: 使用【专用 SPEC】 -> hk-component-elasticsearch.spec
+🔨 阶段 3: 执行构建...
+构建目标平台：x86_64
+为目标x86_64构建
+执行(%prep): /bin/sh -e /var/tmp/rpm-tmp.jZ7fMy
++ umask 022
++ cd /root/rpmbuild/BUILD
++ cd /root/rpmbuild/BUILD
++ rm -rf elasticsearch
++ /usr/bin/tar -xf -
++ /usr/bin/gzip -dc /root/rpmbuild/SOURCES/elasticsearch.tar.gz
++ STATUS=0
++ '[' 0 -ne 0 ']'
++ cd elasticsearch
++ /usr/bin/chmod -Rf a+rX,u+w,g-w,o-w .
++ exit 0
+执行(%install): /bin/sh -e /var/tmp/rpm-tmp.AwBFnm
++ umask 022
++ cd /root/rpmbuild/BUILD
++ '[' /root/rpmbuild/BUILDROOT/hk-component-elasticsearch-1.0.0-1.el7.x86_64 '!=' / ']'
++ rm -rf /root/rpmbuild/BUILDROOT/hk-component-elasticsearch-1.0.0-1.el7.x86_64
+++ dirname /root/rpmbuild/BUILDROOT/hk-component-elasticsearch-1.0.0-1.el7.x86_64
++ mkdir -p /root/rpmbuild/BUILDROOT
++ mkdir /root/rpmbuild/BUILDROOT/hk-component-elasticsearch-1.0.0-1.el7.x86_64
++ cd elasticsearch
++ rm -rf /root/rpmbuild/BUILDROOT/hk-component-elasticsearch-1.0.0-1.el7.x86_64
++ install -d -m 755 /root/rpmbuild/BUILDROOT/hk-component-elasticsearch-1.0.0-1.el7.x86_64/opt/hk/component/elasticsearch
++ cp -a LICENSE.txt NOTICE.txt README.asciidoc bin config data elasticsearch-watch.sh elasticsearch.service es-data jdk lib logs modules plugins server.sh /root/rpmbuild/BUILDROOT/hk-component-elasticsearch-1.0.0-1.el7.x86_64/opt/hk/component/elasticsearch/
++ /usr/lib/rpm/check-buildroot
+处理文件：hk-component-elasticsearch-1.0.0-1.el7.x86_64
+正在查找 Provides：/usr/lib/rpm/redhat/find-provides
+正在查找 Requires(interp)：
+正在查找 Requires(rpmlib)：
+正在查找 Requires(verify)：
+正在查找 Requires(pre)：
+正在查找 Requires(post)：
+正在查找 Requires(preun)：
+正在查找 Requires(postun)：
+正在查找 Requires(pretrans)：
+正在查找 Requires(posttrans)：
+正在查找 Requires：/usr/lib/rpm/redhat/find-requires
+objdump: /root/rpmbuild/BUILDROOT/hk-component-elasticsearch-1.0.0-1.el7.x86_64/opt/hk/component/elasticsearch/modules/ingest-geoip/GeoLite2-ASN.mmdb: 不可识别的文件格式
+Provides: hk-component-elasticsearch = 1.0.0-1.el7 hk-component-elasticsearch(x86-64) = 1.0.0-1.el7 autoconfig()(64bit) autodetect()(64bit) categorize()(64bit) controller()(64bit) data_frame_analyzer()(64bit) libattach.so()(64bit) libawt_headless.so()(64bit) libawt.so()(64bit) libawt_xawt.so()(64bit) libboost_atomic-gcc7-mt-x64-1_71.so.1.71.0()(64bit) libboost_chrono-gcc7-mt-x64-1_71.so.1.71.0()(64bit) libboost_date_time-gcc7-mt-x64-1_71.so.1.71.0()(64bit) libboost_filesystem-gcc7-mt-x64-1_71.so.1.71.0()(64bit) libboost_iostreams-gcc7-mt-x64-1_71.so.1.71.0()(64bit) libboost_log-gcc7-mt-x64-1_71.so.1.71.0()(64bit) libboost_log_setup-gcc7-mt-x64-1_71.so.1.71.0()(64bit) libboost_program_options-gcc7-mt-x64-1_71.so.1.71.0()(64bit) libboost_regex-gcc7-mt-x64-1_71.so.1.71.0()(64bit) libboost_system-gcc7-mt-x64-1_71.so.1.71.0()(64bit) libboost_thread-gcc7-mt-x64-1_71.so.1.71.0()(64bit) libdt_socket.so()(64bit) libextnet.so()(64bit) libfontmanager.so()(64bit) libfreetype.so()(64bit) libgcc_s.so.1()(64bit) libinstrument.so()(64bit) libj2gss.so()(64bit) libj2pcsc.so()(64bit) libj2pkcs11.so()(64bit) libjaas.so()(64bit) libjavajpeg.so()(64bit) libjava.so()(64bit) libjawt.so()(64bit) libjdwp.so()(64bit) libjimage.so()(64bit) libjli.so()(64bit) libjsig.so()(64bit) libjsound.so()(64bit) libjvm.so()(64bit) liblcms.so()(64bit) libmanagement_agent.so()(64bit) libmanagement_ext.so()(64bit) libmanagement.so()(64bit) libMlApi.so()(64bit) libMlConfig.so()(64bit) libMlCore.so()(64bit) libmlib_image.so()(64bit) libMlMaths.so()(64bit) libMlModel.so()(64bit) libnet.so()(64bit) libnio.so()(64bit) libprefs.so()(64bit) librmi.so()(64bit) libsaproc.so()(64bit) libsctp.so()(64bit) libsplashscreen.so()(64bit) libstdc++.so.6()(64bit) libsunec.so()(64bit) libunpack.so()(64bit) libverify.so()(64bit) libxml2.so.2()(64bit) libzip.so()(64bit) normalize()(64bit)
+Requires(interp): /bin/sh /bin/sh /bin/sh
+Requires(rpmlib): rpmlib(FileDigests) <= 4.6.0-1 rpmlib(PayloadFilesHavePrefix) <= 4.0-1 rpmlib(CompressedFileNames) <= 3.0.4-1
+Requires(pre): /bin/sh
+Requires(post): /bin/sh
+Requires(postun): /bin/sh
+Requires: /bin/bash
+检查未打包文件：/usr/lib/rpm/check-files /root/rpmbuild/BUILDROOT/hk-component-elasticsearch-1.0.0-1.el7.x86_64
+写道:/root/rpmbuild/SRPMS/hk-component-elasticsearch-1.0.0-1.el7.src.rpm
+写道:/root/rpmbuild/RPMS/x86_64/hk-component-elasticsearch-1.0.0-1.el7.x86_64.rpm
+执行(%clean): /bin/sh -e /var/tmp/rpm-tmp.riWNJI
++ umask 022
++ cd /root/rpmbuild/BUILD
++ cd elasticsearch
++ rm -rf /root/rpmbuild/BUILDROOT/hk-component-elasticsearch-1.0.0-1.el7.x86_64
++ exit 0
+✅ 组件 elasticsearch 构建成功
+
+--------------------------------------------
+▶️  正在处理组件: [ nginx ]
+📦 阶段 1: 封装源码包 -> nginx.tar.gz
+🔄 策略: 使用【通用 SPEC】 -> hk-component-generic.spec
+🔨 阶段 3: 执行构建...
+构建目标平台：x86_64
+为目标x86_64构建
+执行(%prep): /bin/sh -e /var/tmp/rpm-tmp.6GqVIL
++ umask 022
++ cd /root/rpmbuild/BUILD
++ cd /root/rpmbuild/BUILD
++ rm -rf nginx
++ /usr/bin/gzip -dc /root/rpmbuild/SOURCES/nginx.tar.gz
++ /usr/bin/tar -xf -
++ STATUS=0
++ '[' 0 -ne 0 ']'
++ cd nginx
++ /usr/bin/chmod -Rf a+rX,u+w,g-w,o-w .
++ exit 0
+执行(%install): /bin/sh -e /var/tmp/rpm-tmp.UVrWqF
++ umask 022
++ cd /root/rpmbuild/BUILD
++ '[' /root/rpmbuild/BUILDROOT/hk-component-nginx-1.0.0-1.el7.x86_64 '!=' / ']'
++ rm -rf /root/rpmbuild/BUILDROOT/hk-component-nginx-1.0.0-1.el7.x86_64
+++ dirname /root/rpmbuild/BUILDROOT/hk-component-nginx-1.0.0-1.el7.x86_64
++ mkdir -p /root/rpmbuild/BUILDROOT
++ mkdir /root/rpmbuild/BUILDROOT/hk-component-nginx-1.0.0-1.el7.x86_64
++ cd nginx
++ rm -rf /root/rpmbuild/BUILDROOT/hk-component-nginx-1.0.0-1.el7.x86_64
++ install -d -m 755 /root/rpmbuild/BUILDROOT/hk-component-nginx-1.0.0-1.el7.x86_64/opt/hk/component/nginx
++ cp -a client_body_temp conf fastcgi_temp html logs proxy_temp sbin scgi_temp uwsgi_temp /root/rpmbuild/BUILDROOT/hk-component-nginx-1.0.0-1.el7.x86_64/opt/hk/component/nginx/
++ /usr/lib/rpm/check-buildroot
++ /usr/lib/rpm/redhat/brp-compress
++ /usr/lib/rpm/redhat/brp-strip /bin/true
++ /usr/lib/rpm/redhat/brp-strip-comment-note /bin/true /usr/bin/objdump
++ /usr/lib/rpm/redhat/brp-strip-static-archive /bin/true
++ /usr/lib/rpm/brp-python-bytecompile /usr/bin/python 1
++ /usr/lib/rpm/redhat/brp-python-hardlink
+处理文件：hk-component-nginx-1.0.0-1.el7.x86_64
+正在查找 Provides：
+正在查找 Requires(interp)：
+正在查找 Requires(rpmlib)：
+正在查找 Requires(verify)：
+正在查找 Requires(pre)：
+正在查找 Requires(post)：
+正在查找 Requires(preun)：
+正在查找 Requires(postun)：
+正在查找 Requires(pretrans)：
+正在查找 Requires(posttrans)：
+正在查找 Requires：
+Provides: hk-component-nginx = 1.0.0-1.el7 hk-component-nginx(x86-64) = 1.0.0-1.el7
+Requires(interp): /bin/sh /bin/sh
+Requires(rpmlib): rpmlib(FileDigests) <= 4.6.0-1 rpmlib(PayloadFilesHavePrefix) <= 4.0-1 rpmlib(CompressedFileNames) <= 3.0.4-1
+Requires(post): /bin/sh
+Requires(postun): /bin/sh
+检查未打包文件：/usr/lib/rpm/check-files /root/rpmbuild/BUILDROOT/hk-component-nginx-1.0.0-1.el7.x86_64
+写道:/root/rpmbuild/SRPMS/hk-component-nginx-1.0.0-1.el7.src.rpm
+写道:/root/rpmbuild/RPMS/x86_64/hk-component-nginx-1.0.0-1.el7.x86_64.rpm
+执行(%clean): /bin/sh -e /var/tmp/rpm-tmp.eqL9Wr
++ umask 022
++ cd /root/rpmbuild/BUILD
++ cd nginx
++ rm -rf /root/rpmbuild/BUILDROOT/hk-component-nginx-1.0.0-1.el7.x86_64
++ exit 0
+✅ 组件 nginx 构建成功
+
+==========================================
+🎉 批量构建任务完成！
+📍 RPM 产物清单:
+-rw-r--r--. 1 root root 7.9M 12月 19 16:17 /root/rpmbuild/RPMS/x86_64/hk-component-redis-1.0.0-1.el7.x86_64.rpm
+-rw-r--r--. 1 root root 74M 12月 19 16:17 /root/rpmbuild/RPMS/x86_64/hk-component-nacos-1.0.0-1.el7.x86_64.rpm
+-rw-r--r--. 1 root root 62M 12月 19 16:18 /root/rpmbuild/RPMS/x86_64/hk-component-kafka-1.0.0-1.el7.x86_64.rpm
+-rw-r--r--. 1 root root 315M 12月 19 16:23 /root/rpmbuild/RPMS/x86_64/hk-component-elasticsearch-1.0.0-1.el7.x86_64.rpm
+-rw-r--r--. 1 root root 1.3M 12月 19 16:23 /root/rpmbuild/RPMS/x86_64/hk-component-nginx-1.0.0-1.el7.x86_64.rpm
+==========================================
+   ✅ components 构建完成并已更新缓存
+
+🔧 正在重新构建组件: services
+   参数: ARCH=x86_64, DIST=el7, VERSION=1.0.0
+==========================================
+🔧 Services 构建配置
+==========================================
+  组件名称: hk-service-smzjg
+  版本号: 1.0.0
+  系统架构: x86_64 (构建为 noarch)
+  发行版: el7
+  源码路径: /opt/hk
+  打包目录: hkservice config script res
+==========================================
+
+🧹 正在清理并初始化构建环境...
+📦 阶段 1: 正在封装多目录源码包...
+✅ 源码包已就绪: hkservices.tar.gz
+🔨 阶段 2: 开始构建 RPM 包 -> hk-service-smzjg
+执行(%prep): /bin/sh -e /var/tmp/rpm-tmp.EPDKQa
++ umask 022
++ cd /root/rpmbuild/BUILD
++ cd /root/rpmbuild/BUILD
++ rm -rf hk-service-smzjg-1.0.0
++ /usr/bin/mkdir -p hk-service-smzjg-1.0.0
++ cd hk-service-smzjg-1.0.0
++ /usr/bin/tar -xf -
++ /usr/bin/gzip -dc /root/rpmbuild/SOURCES/hkservices.tar.gz
++ STATUS=0
++ '[' 0 -ne 0 ']'
++ /usr/bin/chmod -Rf a+rX,u+w,g-w,o-w .
++ exit 0
+执行(%install): /bin/sh -e /var/tmp/rpm-tmp.PJ3khf
++ umask 022
++ cd /root/rpmbuild/BUILD
++ '[' /root/rpmbuild/BUILDROOT/hk-service-smzjg-1.0.0-1.el7.x86_64 '!=' / ']'
++ rm -rf /root/rpmbuild/BUILDROOT/hk-service-smzjg-1.0.0-1.el7.x86_64
+++ dirname /root/rpmbuild/BUILDROOT/hk-service-smzjg-1.0.0-1.el7.x86_64
++ mkdir -p /root/rpmbuild/BUILDROOT
++ mkdir /root/rpmbuild/BUILDROOT/hk-service-smzjg-1.0.0-1.el7.x86_64
++ cd hk-service-smzjg-1.0.0
++ rm -rf /root/rpmbuild/BUILDROOT/hk-service-smzjg-1.0.0-1.el7.x86_64
++ install -d -m 755 /root/rpmbuild/BUILDROOT/hk-service-smzjg-1.0.0-1.el7.x86_64/opt/hk/hkservice
++ install -d -m 755 /root/rpmbuild/BUILDROOT/hk-service-smzjg-1.0.0-1.el7.x86_64/opt/hk/res
++ install -d -m 755 /root/rpmbuild/BUILDROOT/hk-service-smzjg-1.0.0-1.el7.x86_64/opt/hk/script
++ install -d -m 755 /root/rpmbuild/BUILDROOT/hk-service-smzjg-1.0.0-1.el7.x86_64/etc/procmate/conf.d
++ cp -a hkservice/access /root/rpmbuild/BUILDROOT/hk-service-smzjg-1.0.0-1.el7.x86_64/opt/hk/hkservice/
++ cp -a 'res/*' /root/rpmbuild/BUILDROOT/hk-service-smzjg-1.0.0-1.el7.x86_64/opt/hk/res/
+cp: cannot stat 'res/*': No such file or directory
+错误：/var/tmp/rpm-tmp.PJ3khf (%install) 退出状态不好
+
+
+RPM 构建错误：
+    /var/tmp/rpm-tmp.PJ3khf (%install) 退出状态不好
