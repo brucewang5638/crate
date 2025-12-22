@@ -9,9 +9,9 @@ import (
 	"strings"
 	"time"
 
-	"crate/internal/builder"
-	"crate/internal/config"
-	"crate/internal/repo"
+	"crate/pkg/builder"
+	"crate/pkg/config"
+	"crate/pkg/repo"
 )
 
 func main() {

@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"crate/internal/config"
+	"crate/pkg/config"
 )
 
 // Generate 生成离线 YUM 仓库

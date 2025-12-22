@@ -34,5 +34,7 @@ Thumbs.db
 # Editor / IDE
 .idea/
 .vscode/
+!.vscode/settings.json
+!.vscode/lanuch.json
 *.swp
 *~

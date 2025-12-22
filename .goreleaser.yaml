@@ -1,0 +1,43 @@
+# .goreleaser.yaml
+project_name: crate
+
+before:
+  hooks:
+    - go mod tidy
+
+builds:
+  - id: crate-build
+    main: ./cmd/crate/main.go
+    binary: crate
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+    goarch:
+      - amd64
+      - arm64
+
+archives:
+  - format: tar.gz
+    # use zip for windows
+    # format_overrides:
+    #   - goos: windows
+    #     format: zip
+    name_template: >-
+      {{ .ProjectName }}_
+      {{- .Version }}_
+      {{- .Os }}_
+      {{- .Arch }}
+
+checksum:
+  name_template: 'checksums.txt'
+
+snapshot:
+  name_template: "{{ .Tag }}-next"
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - '^docs:'
+      - '^test:'

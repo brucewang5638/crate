@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"crate/internal/config"
+	"crate/pkg/config"
 )
 
 // Build 执行指定目标的构建流程

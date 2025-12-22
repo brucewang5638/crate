@@ -1,0 +1,50 @@
+# GitHub Actions 工作流名称
+name: Release App Binary
+
+# 工作流触发条件
+on:
+  push:
+    # 只有当推送的是一个 tag 时，才触发此工作流
+    tags:
+      - 'v*' # 匹配所有以 'v' 开头的 tag, 例如 v1.0, v0.1.0
+
+# 工作流包含的任务
+jobs:
+  # 定义一个名为 build-and-release 的任务
+  build-and-release:
+    # 指定任务运行的虚拟环境，使用最新的 Ubuntu 系统
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
+      id-token: write
+
+    # 定义此任务的执行步骤
+    steps:
+      # 第一步：检出代码
+      # 使用一个社区维护的、非常流行的 action 来获取您的仓库代码
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 第二步：设置 Go 语言环境
+      # 使用官方的 setup-go action 来安装指定版本的 Go
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.21' # 您可以根据需要修改 Go 的版本
+
+      # 第三步：运行 GoReleaser
+      # GoReleaser 是一个专门为 Go 项目设计的、功能极其强大的发布工具。
+      # 它能自动处理交叉编译、打包、生成校验和、创建 Release 等所有繁琐的工作。
+      # 我们只需要给它一个简单的配置文件。
+      - name: Run GoReleaser
+        uses: goreleaser/goreleaser-action@v5
+        with:
+          # 指定 GoReleaser 的版本
+          version: latest
+          # 给予它执行权限的参数
+          args: release --clean
+        env:
+          # GITHUB_TOKEN 是一个由 GitHub Actions 自动生成的秘密令牌，
+          # GoReleaser 需要用它来获得向您的仓库创建 Release 的权限。
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
