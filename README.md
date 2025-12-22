@@ -86,7 +86,7 @@ components:
   - name: "redis"           # 组件名 (Builder 内部标识)
     version: "6.2.6"
     type: "infra"
-    spec: "specs/-redis.spec"  # SPEC 文件路径
+    spec: "specs/redis.spec"  # SPEC 文件路径
     source_dir: "/path/to/redis-src"       # 源码目录
     validate_exists: ["README.md"]         # (可选) 预检查文件
     pre_build: "make distclean"            # (可选) 预构建脚本
@@ -96,7 +96,7 @@ components:
 
 1.  **Config**: 读取 `config.yaml`，解析组件信息。
 2.  **Pre-check**: 检查 `source_dir` 是否存在，执行 `pre_build` 脚本。
-3.  **Cache**: 检查 `~/.rpm_cache` 是否已有 `-redis-6.2.6-*.rpm`。
+3.  **Cache**: 检查 `~/.rpm_cache` 是否已有 `redis-6.2.6-*.rpm`。
     *   如果有且无 `-force`: 直接跳过构建，使用缓存。
     *   如果无或有 `-force`: 进入构建流程。
 4.  **Tarball**: 将 `source_dir` 打包为 `redis.tar.gz` (Source0)。
