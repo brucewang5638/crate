@@ -11,7 +11,7 @@ components:
   - name: "procmate"
     version: "1.5.3"
     type: "app"
-    spec: "buildrpm/procmate.spec"
+    spec: "specs/procmate.spec"
     # Source dir logic needs to be handled carefully.
     # v1 scripts had diverse logic. We unify here.
     # Logic: If source_dir is set, use it. If not, use convention.
@@ -24,49 +24,49 @@ components:
   - name: "redis"
     version: "6.2.0"
     type: "infra"
-    spec: "buildrpm/hk-component-redis.spec"
+    spec: "specs/hk-component-redis.spec"
     source_dir: "/opt/hk/component/redis"
     tags: ["infra", "components"]
 
   - name: "nacos"
     version: "2.0.3"
     type: "infra"
-    spec: "buildrpm/hk-component-nacos.spec"
+    spec: "specs/hk-component-nacos.spec"
     source_dir: "/opt/hk/component/nacos"
     tags: ["infra", "components"]
 
   - name: "kafka"
     version: "2.8.0"
     type: "infra"
-    spec: "buildrpm/hk-component-kafka.spec"
+    spec: "specs/hk-component-kafka.spec"
     source_dir: "/opt/hk/component/kafka"
     tags: ["infra", "components"]
 
   - name: "elasticsearch"
     version: "7.10.0"
     type: "infra"
-    spec: "buildrpm/hk-component-elasticsearch.spec"
+    spec: "specs/hk-component-elasticsearch.spec"
     source_dir: "/opt/hk/component/elasticsearch"
     tags: ["infra", "components"]
 
   - name: "nginx"
     version: "1.20.1"
     type: "infra"
-    spec: "buildrpm/hk-component-nginx.spec" # Assuming this exists or generic
+    spec: "specs/hk-component-nginx.spec" # Assuming this exists or generic
     source_dir: "/opt/hk/component/nginx"
     tags: ["infra", "components"]
 
   - name: "mariadb"
     version: "10.5.0"
     type: "infra"
-    spec: "buildrpm/hk-component-mariadb.spec" # Assuming exists
+    spec: "specs/hk-component-mariadb.spec" # Assuming exists
     source_dir: "/opt/hk/component/mariadb"
     tags: ["infra", "components"]
 
   - name: "common"
     version: "1.0.0"
     type: "infra"
-    spec: "buildrpm/hk-component-common.spec"
+    spec: "specs/hk-component-common.spec"
     source_dir: "/opt/hk/component/common"
     tags: ["infra", "components"]
 
@@ -74,7 +74,7 @@ components:
   - name: "smzjg"
     version: "1.0.0"
     type: "service"
-    spec: "buildrpm/hk-service-smzjg.spec"
+    spec: "specs/hk-service-smzjg.spec"
     # Service build was gathering multiple folders.
     # We can handle this by customized builder logic or specifying multiple sources if needed.
     # For now, let's point to the base and we can implement mult-dir packing in code.
@@ -84,7 +84,7 @@ components:
   - name: "gateway"
     version: "1.2.0"
     type: "service"
-    spec: "buildrpm/hk-service-gateway.spec"
+    spec: "specs/hk-service-gateway.spec"
     source_dir: "/opt/hk" # Placeholder
     tags: ["services"]
 
