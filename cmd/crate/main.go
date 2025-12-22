@@ -53,7 +53,19 @@ func main() {
 	flag.Parse()
 
 	// 1. 加载配置
-	cfg, err := config.Load(*configFile)
+	// 智能查找配置: 如果是默认值且本地不存在，尝试系统全局路径
+	targetConfig := *configFile
+	if targetConfig == "config.yaml" {
+		if _, err := os.Stat(targetConfig); os.IsNotExist(err) {
+			globalConfig := "/etc/crate/config.yaml"
+			if _, err := os.Stat(globalConfig); err == nil {
+				fmt.Printf("ℹ️  本地未找到配置，使用全局配置: %s\n", globalConfig)
+				targetConfig = globalConfig
+			}
+		}
+	}
+
+	cfg, err := config.Load(targetConfig)
 	if err != nil {
 		fmt.Printf("❌ 加载配置失败: %v\n", err)
 		os.Exit(1)
