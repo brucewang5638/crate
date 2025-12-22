@@ -65,7 +65,7 @@ func buildOne(cfg *config.Config, comp config.Component, force bool) error {
 	// 0.4 检查缓存
 	// 匹配模式: name-version-edition*.rpm
 	// 这样可以区分 edition (例如 core vs pro)
-	cachePattern := fmt.Sprintf("%s-%s-%s*.rpm", comp.Name, comp.Version, comp.Edition)
+	cachePattern := fmt.Sprintf("*%s-%s-%s*.rpm", comp.Name, comp.Version, comp.Edition)
 
 	if !force {
 		matches, _ := filepath.Glob(filepath.Join(cacheDir, cachePattern))
