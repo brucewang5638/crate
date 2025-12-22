@@ -17,7 +17,7 @@
 Name:           example-component
 Version:        %{version}
 Release:        1%{?dist}
-Summary:        这是一个 Crate 构建工具的示例组件
+Summary:        这是一个 Crate 构建工具的示例构建块
 
 License:        Proprietary
 URL:            http://example.com/

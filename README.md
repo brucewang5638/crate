@@ -1,10 +1,10 @@
 # Crate 自动化构建工具
 
-Crate 是一个现代化 Go 语言rpm包构建工具。它替代了传统的 Shell 脚本，提供原子化组件构建、智能缓存、多架构支持以及一键发布 YUM 仓库的能力。
+Crate 是一个现代化 Go 语言rpm包构建工具。它替代了传统的 Shell 脚本，提供原子化构建块构建、智能缓存、多架构支持以及一键发布 YUM 仓库的能力。
 
 ## ✨ 核心特性
 
-*   **原子化构建**: 支持单独构建任意组件（如 `redis`, `myservice`），无需全量跑。
+*   **原子化构建**: 支持单独构建任意构建块（如 `redis`, `myservice`），无需全量跑。
 *   **智能缓存**: 基于版本号自动检测缓存，避免重复构建耗时。
 *   **强制构建**: 支持 `-force` 参数强制刷新缓存，适合开发调试。
 *   **多架构支持**: 自动识别 `x86_64` (amd64) 和 `aarch64` (arm64)，适配 Centos 7 及 Kylin V10。
@@ -21,19 +21,19 @@ go build -o crate ./cmd/crate
 ### 2. 常用命令 (最佳实践)
 
 #### 🚀 全量构建 (首次运行/CI环境)
-构建配置文件中列出的所有组件。
+构建配置文件中列出的所有构建块。
 ```bash
 ./crate -build all
 ```
 
 #### 🔄 服务迭代 (日常开发)
-仅构建 Service 层组件，并强制刷新缓存（忽略版本号检查）。
+仅构建 Service 层构建块，并强制刷新缓存（忽略版本号检查）。
 ```bash
 ./crate -build services -force
 ```
 
 #### 📦 正式发布 (提测/交付)
-构建所有组件，并生成最终的发布包（包含 repo 和 install.sh）。
+构建所有构建块，并生成最终的发布包（包含 repo 和 install.sh）。
 ```bash
 ./crate -build all -release
 ```
@@ -41,7 +41,7 @@ go build -o crate ./cmd/crate
 ### 3. 所有选项
 ```text
   -build string
-        指定构建的目标组件名 (Name) 或 组名 (Group)，或者 'all'
+        指定构建的目标构建块名 (Name) 或 组名 (Group)，或者 'all'
   -config string
         配置文件路径 (默认 "config.yaml")
   -force
@@ -76,14 +76,14 @@ dist_default: "el7"
 cache_dir: "~/.rpm_cache"  # 构建产物缓存路径
 build_root: "~/rpmbuild"   # rpmbuild 工作目录
 
-# 定义组件组，方便批量构建
+# 定义构建块组，方便批量构建
 groups:
   infra: ["redis", "mysql", "nginx"]
   services: ["myservice", "gateway"]
 
-# 组件定义
+# 构建块定义
 components:
-  - name: "redis"           # 组件名 (Builder 内部标识)
+  - name: "redis"           # 构建块名 (Builder 内部标识)
     version: "6.2.6"
     type: "infra"
     spec: "specs/redis.spec"  # SPEC 文件路径
@@ -94,7 +94,7 @@ components:
 
 ## 🛠️ 这里是如何工作的
 
-1.  **Config**: 读取 `config.yaml`，解析组件信息。
+1.  **Config**: 读取 `config.yaml`，解析构建块信息。
 2.  **Pre-check**: 检查 `source_dir` 是否存在，执行 `pre_build` 脚本。
 3.  **Cache**: 检查 `~/.rpm_cache` 是否已有 `redis-6.2.6-*.rpm`。
     *   如果有且无 `-force`: 直接跳过构建，使用缓存。

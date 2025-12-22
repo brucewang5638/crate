@@ -17,7 +17,7 @@ import (
 func main() {
 	// 定义命令行参数
 	configFile := flag.String("config", "config.yaml", "配置文件路径")
-	buildTarget := flag.String("build", "", "指定构建的目标组件或组 (例如: 'redis', 'components')")
+	buildTarget := flag.String("build", "", "指定构建的目标构建块或组 (例如: 'redis', 'components')")
 	release := flag.Bool("release", false, "生成最终发布包 (包含仓库和安装脚本)")
 	arch := flag.String("arch", "", "覆盖默认架构 (例如: aarch64)")
 	dist := flag.String("dist", "", "覆盖发行版标识 (例如: el7)")
@@ -30,7 +30,7 @@ func main() {
 		fmt.Fprintf(flag.CommandLine.Output(), "选项:\n")
 		flag.PrintDefaults()
 		fmt.Fprintf(flag.CommandLine.Output(), "\n示例:\n")
-		fmt.Fprintf(flag.CommandLine.Output(), "  构建单个组件:\n")
+		fmt.Fprintf(flag.CommandLine.Output(), "  构建单个构建块:\n")
 		fmt.Fprintf(flag.CommandLine.Output(), "     %s -build redis\n", os.Args[0])
 		fmt.Fprintf(flag.CommandLine.Output(), "  强制重新构建 (忽略缓存):\n")
 		fmt.Fprintf(flag.CommandLine.Output(), "     %s -build redis -force\n", os.Args[0])
@@ -143,7 +143,7 @@ func runRelease(cfg *config.Config) error {
 
 	// 4. 生成版本清单 (Manifest)
 	manifestPath := filepath.Join(releaseDir, "VERSION_MANIFEST.txt")
-	manifestContent := fmt.Sprintf("发布版本: %s\n构建时间: %s\n架构: %s\n\n包含组件:\n",
+	manifestContent := fmt.Sprintf("发布版本: %s\n构建时间: %s\n架构: %s\n\n包含构建块:\n",
 		releaseName, time.Now().Format(time.RFC3339), cfg.Arch)
 	for _, c := range cfg.Components {
 		manifestContent += fmt.Sprintf("- %s: %s\n", c.Name, c.Version)

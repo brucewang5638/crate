@@ -16,15 +16,15 @@ system_deps:
   - "java-1.8.0-openjdk"
 
 # --- 分组定义 ---
-# 允许通过 -build infra 一次性构建多个组件
+# 允许通过 -build infra 一次性构建多个构建块
 groups:
   infra: ["redis", "mysql", "nginx"]
   backend: ["api-server", "worker"]
   all_services: ["example", "api-server"]
 
-# --- 组件定义 ---
+# --- 构建块定义 ---
 components:
-  - name: "example"                   # 组件唯一标识 (comp_name)
+  - name: "example"                   # 构建块唯一标识 (comp_name)
     version: "1.0.0"                  # 版本号
     type: "service"                   # 类型 (仅做标记，暂不影响构建逻辑)
     spec: "specs/example.spec"        # SPEC 文件路径

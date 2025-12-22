@@ -87,7 +87,7 @@ func Load(path string) (*Config, error) {
 	return &cfg, nil
 }
 
-// FindComponents 将目标字符串（组名或组件名）展开为组件列表
+// FindComponents 将目标字符串（组名或构建块名）展开为构建块列表
 func (c *Config) FindComponents(target string) ([]Component, error) {
 	// 0. 特殊关键字: all
 	if target == "all" {
@@ -105,16 +105,16 @@ func (c *Config) FindComponents(target string) ([]Component, error) {
 		var result []Component
 		for _, m := range members {
 			// 递归逻辑（如果组包含组）目前暂未实现
-			// 假设组内只包含标签 (Tags) 或组件名 (Name)
+			// 假设组内只包含标签 (Tags) 或构建块名 (Name)
 
-			// 尝试按名称或标签查找组件
+			// 尝试按名称或标签查找构建块
 			found := c.findByTagOrName(m)
 			result = append(result, found...)
 		}
 		return unique(result), nil
 	}
 
-	// 2. 检查是否为直接的组件名
+	// 2. 检查是否为直接的构建块名
 	found := c.findByTagOrName(target)
 	if len(found) > 0 {
 		return found, nil
@@ -133,7 +133,7 @@ func (c *Config) findByTagOrName(key string) []Component {
 		}
 
 		// 2. 如果是通过 Tags 查找，则必须检查 Enabled 状态
-		// 跳过未启用的组件
+		// 跳过未启用的构建块
 		if comp.Enabled != nil && !*comp.Enabled {
 			continue
 		}

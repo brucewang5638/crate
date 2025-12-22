@@ -17,18 +17,18 @@ func Build(cfg *config.Config, target string, force bool) error {
 		return err
 	}
 
-	fmt.Printf("🎯 目标 '%s' 包含 %d 个组件，开始构建...\n", target, len(targets))
+	fmt.Printf("🎯 目标 '%s' 包含 %d 个构建块，开始构建...\n", target, len(targets))
 
 	for _, comp := range targets {
 		if err := buildOne(cfg, comp, force); err != nil {
-			return fmt.Errorf("构建组件 %s 失败: %w", comp.Name, err)
+			return fmt.Errorf("构建构建块 %s 失败: %w", comp.Name, err)
 		}
 	}
 
 	return nil
 }
 
-// buildOne 处理单个组件的完整生命周期
+// buildOne 处理单个构建块的完整生命周期
 func buildOne(cfg *config.Config, comp config.Component, force bool) error {
 	fmt.Printf("\n🔧 [构建中] %s (v%s)...\n", comp.Name, comp.Version)
 
@@ -108,7 +108,7 @@ func buildOne(cfg *config.Config, comp config.Component, force bool) error {
 	// 3. 准备 SPEC 文件
 	specSrc := comp.Spec
 	if specSrc == "" {
-		return fmt.Errorf("组件 %s 未定义 spec 文件", comp.Name)
+		return fmt.Errorf("构建块 %s 未定义 spec 文件", comp.Name)
 	}
 	specDest := filepath.Join(buildRoot, "SPECS", filepath.Base(specSrc))
 	if err := copyFile(specSrc, specDest); err != nil {
