@@ -16,6 +16,7 @@ type Component struct {
 	Enabled        *bool    `yaml:"enabled"`         // [新增] 是否启用构建 (默认: true)
 	Spec           string   `yaml:"spec"`            // SPEC 文件路径
 	SourceDir      string   `yaml:"source_dir"`      // 源码目录绝对路径
+	Includes       []string `yaml:"includes"`        // [新增] 仅打包指定的子文件/目录 (相对 SourceDir)
 	PreBuild       string   `yaml:"pre_build"`       // [新增] 预构建脚本 (Shell 命令)
 	ValidateExists []string `yaml:"validate_exists"` // [新增] 必须存在的文件列表 (相对 SourceDir)
 	Tags           []string `yaml:"tags"`

@@ -99,8 +99,8 @@ func buildOne(cfg *config.Config, comp config.Component, force bool) error {
 		tarPath := filepath.Join(buildRoot, "SOURCES", tarName)
 
 		fmt.Printf("   📦 打包源码: %s -> %s\n", comp.SourceDir, tarName)
-		// Assuming createTarball handles errors correctly
-		if err := createTarball(tarPath, comp.SourceDir, comp.Name); err != nil {
+		// assuming createTarball handles errors correctly
+		if err := createTarball(tarPath, comp.SourceDir, comp.Includes); err != nil {
 			return fmt.Errorf("源码打包失败: %w", err)
 		}
 	}
@@ -152,20 +152,27 @@ func buildOne(cfg *config.Config, comp config.Component, force bool) error {
 	return nil
 }
 
-func createTarball(tarPath, srcDir, prefix string) error {
-	// 使用 'tar' 命令进行打包，模拟原脚本行为
-	// -C parent_of_srcDir -czf tarPath basename_of_srcDir
-	// 注意：我们假设 SPEC 文件期望的解压目录名与源码目录名一致
-	// 如果不一致，可能需要更复杂的 tar 变换逻辑
+func createTarball(tarPath, srcDir string, includes []string) error {
+	// 使用 'tar' 命令进行打包
 
-	// We'll use the parent directory of SourceDir as the context
-	parent := filepath.Dir(srcDir)
-	base := filepath.Base(srcDir)
+	var cmd *exec.Cmd
 
-	cmd := exec.Command("tar", "-czf", tarPath, "-C", parent, base)
-	// If the folder inside tar needs to be renamed to 'prefix', handling that with simple tar command is tricky
-	// unless we use --transform.
-	// For now, we assume SourceDir leaf name matches what SPEC expects.
+	if len(includes) > 0 {
+		// 模式 A: 指定了 Includes
+		// 行为: 进入 srcDir，仅打包 includes 列出的文件/目录
+		// 结果: tar 包根目录下直接就是 include1, include2...
+		args := []string{"-czf", tarPath, "-C", srcDir}
+		args = append(args, includes...)
+		cmd = exec.Command("tar", args...)
+		fmt.Printf("      (包含: %v)\n", includes)
+	} else {
+		// 模式 B: 默认行为
+		// 行为: 进入 srcDir 的父目录，打包 srcDir 本身
+		// 结果: tar 包根目录下有一个顶层目录 (srcDir 的 basename)
+		parent := filepath.Dir(srcDir)
+		base := filepath.Base(srcDir)
+		cmd = exec.Command("tar", "-czf", tarPath, "-C", parent, base)
+	}
 
 	out, err := cmd.CombinedOutput()
 	if err != nil {
