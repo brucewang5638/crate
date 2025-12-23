@@ -40,21 +40,39 @@ func Generate(cfg *config.Config, releaseDir string) error {
 
 // generateEl7 使用 repotrack (RHEL/CentOS 7)
 func generateEl7(cfg *config.Config, repoDir string) error {
-	fmt.Println("\n📦 [EL7] 正在下载系统依赖 (repotrack)...")
+	depsCache, err := ensureDepsCache(cfg)
+	if err != nil {
+		return fmt.Errorf("无法创建依赖缓存: %w", err)
+	}
+
+	fmt.Printf("\n📦 [EL7] 正在下载系统依赖 (缓存目录: %s)...\n", depsCache)
+
 	for _, pkg := range cfg.SystemDeps {
 		fmt.Printf("   -> %s\n", pkg)
-		cmd := exec.Command("repotrack", "-p", repoDir, pkg)
+		// 下载到缓存目录
+		cmd := exec.Command("repotrack", "-p", depsCache, pkg)
 		if err := cmd.Run(); err != nil {
 			fmt.Printf("      ⚠️ 警告: repotrack 下载 %s 失败: %v\n", pkg, err)
 		}
 	}
+
+	// 从缓存同步到当前的 repo 目录
+	if err := syncCacheToRepo(depsCache, repoDir); err != nil {
+		return err
+	}
+
 	// 生成元数据
 	return runCreaterepo(repoDir, "createrepo")
 }
 
 // generateKylin 使用 dnf (Kylin V10+)
 func generateKylin(cfg *config.Config, repoDir string) error {
-	fmt.Println("\n� [Kylin] 正在下载系统依赖 (dnf)...")
+	depsCache, err := ensureDepsCache(cfg)
+	if err != nil {
+		return fmt.Errorf("无法创建依赖缓存: %w", err)
+	}
+
+	fmt.Printf("\n🐉 [Kylin] 正在下载系统依赖 (缓存目录: %s)...\n", depsCache)
 
 	// 1. 检查并安装 createrepo_c
 	if _, err := exec.LookPath("createrepo_c"); err != nil {
@@ -70,8 +88,8 @@ func generateKylin(cfg *config.Config, repoDir string) error {
 	deps := append(cfg.SystemDeps, "createrepo_c")
 
 	// 3. 批量下载
-	// dnf download --resolve --alldeps --destdir="$REPO_DIR" "${DEPS[@]}"
-	args := []string{"download", "--resolve", "--alldeps", "--destdir", repoDir}
+	// 下载到缓存目录
+	args := []string{"download", "--resolve", "--alldeps", "--destdir", depsCache}
 	args = append(args, deps...)
 
 	fmt.Printf("   🚀 执行 DNF 批量下载 (%d 个包)...\n", len(deps))
@@ -80,6 +98,11 @@ func generateKylin(cfg *config.Config, repoDir string) error {
 	cmd.Stderr = os.Stderr
 	if err := cmd.Run(); err != nil {
 		return fmt.Errorf("dnf download 失败: %w", err)
+	}
+
+	// 从缓存同步到当前的 repo 目录
+	if err := syncCacheToRepo(depsCache, repoDir); err != nil {
+		return err
 	}
 
 	// 生成元数据 (使用 createrepo_c)
@@ -119,6 +142,46 @@ echo "Done! Please setup your services manually."
 `
 	if err := os.WriteFile(scriptPath, []byte(content), 0755); err != nil {
 		return err
+	}
+	// ... existing code ...
+	return nil
+}
+
+// 辅助函数: 确保依赖缓存目录存在
+func ensureDepsCache(cfg *config.Config) (string, error) {
+	cacheDir := cfg.CacheDir
+	if strings.HasPrefix(cacheDir, "~/") {
+		dirname, _ := os.UserHomeDir()
+		cacheDir = filepath.Join(dirname, cacheDir[2:])
+	}
+	depsDir := filepath.Join(cacheDir, "deps", cfg.Dist) // 按发行版隔离缓存
+	if err := os.MkdirAll(depsDir, 0755); err != nil {
+		return "", err
+	}
+	return depsDir, nil
+}
+
+// 辅助函数: 将文件从缓存同步到 Repo 目录
+func syncCacheToRepo(srcDir, dstDir string) error {
+	fmt.Printf("   ♻️  正在从缓存同步 RPM 包...\n")
+	files, err := filepath.Glob(filepath.Join(srcDir, "*.rpm"))
+	if err != nil {
+		return err
+	}
+
+	for _, f := range files {
+		baseName := filepath.Base(f)
+		dst := filepath.Join(dstDir, baseName)
+		// 如果目标不存在，或者大小不同，则复制 (简单同步逻辑)
+		// 这里为了简单，直接覆盖
+		data, err := os.ReadFile(f)
+		if err != nil {
+			fmt.Printf("      ⚠️ 读取缓存文件失败 %s: %v\n", baseName, err)
+			continue
+		}
+		if err := os.WriteFile(dst, data, 0644); err != nil {
+			return fmt.Errorf("写入文件失败: %w", err)
+		}
 	}
 	return nil
 }

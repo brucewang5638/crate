@@ -104,7 +104,7 @@ func main() {
 }
 
 func runRelease(cfg *config.Config) error {
-	releaseName := fmt.Sprintf("%s-%s-%s-%s", cfg.ProjectName, cfg.Arch, cfg.Dist, time.Now().Format("20000101"))
+	releaseName := fmt.Sprintf("%s-%s-%s-%s", cfg.ProjectName, cfg.Arch, cfg.Dist, time.Now().Format("20060102"))
 	releaseDir := filepath.Join(os.Getenv("HOME"), releaseName)
 
 	fmt.Printf("\n🚀 开始生成发布包: %s\n", releaseName)

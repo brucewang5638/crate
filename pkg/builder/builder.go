@@ -30,7 +30,7 @@ func Build(cfg *config.Config, target string, force bool) error {
 
 // buildOne 处理单个构建块的完整生命周期
 func buildOne(cfg *config.Config, comp config.Component, force bool) error {
-	fmt.Printf("\n🔧 [构建中] %s-%s (v%s)...\n", comp.Name, comp.Edition, comp.Version)
+	fmt.Printf("\n🔧 [构建中] %s (v%s-%s)...\n", comp.Name, comp.Version, comp.Edition)
 
 	cacheDir := expandPath(cfg.CacheDir)
 	if err := os.MkdirAll(cacheDir, 0755); err != nil {
