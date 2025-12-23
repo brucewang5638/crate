@@ -161,6 +161,12 @@ func runRelease(cfg *config.Config) error {
 	}
 
 	fmt.Printf("\n🎉 发布完成! 文件位于: %s\n", tarball)
+
+	// 清理临时目录
+	if err := os.RemoveAll(releaseDir); err != nil {
+		fmt.Printf("⚠️ 警告: 无法清理临时发布目录: %v\n", err)
+	}
+
 	return nil
 }
 
