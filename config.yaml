@@ -3,7 +3,7 @@
 # =========================================================
 
 project_name: "my-project"
-dist_default: "el7"         # 默认发行版标识 (会附加到 rpm release 字段, 如 .el7)
+# dist_default: "el7"       # 默认发行版标识 (默认不填 会自动检测)
 cache_dir: "~/.rpm_cache"   # 构建成功的 RPM 缓存路径
 build_root: "~/rpmbuild"    # rpmbuild 的临时工作空间
 

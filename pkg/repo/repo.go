@@ -17,16 +17,19 @@ func Generate(cfg *config.Config, releaseDir string) error {
 		return err
 	}
 
-	// 检测是否为 Kylin 系统
-	dist := strings.ToLower(cfg.Dist)
-	isKylin := strings.Contains(dist, "kylin") || strings.Contains(dist, "v10")
-	// 更鲁棒的判断
-	// if strings.Contains(strings.ToLower(cfg.Dist), "kylin") ... (需要引入 strings 包)
-
+	// 根据发行版选择下载工具
 	var err error
-	if isKylin {
+	dist := strings.ToLower(cfg.Dist)
+
+	switch {
+	case strings.Contains(dist, "kylin") || strings.Contains(dist, "ky"):
+		// Kylin V10+ 使用 DNF
 		err = generateKylin(cfg, repoDir)
-	} else {
+	case strings.Contains(dist, "el") || strings.Contains(dist, "centos"):
+		// CentOS 7 使用 repotrack
+		err = generateEl7(cfg, repoDir)
+	default:
+		// 默认 fallback, 假设是 el7
 		err = generateEl7(cfg, repoDir)
 	}
 
@@ -172,8 +175,19 @@ func syncCacheToRepo(srcDir, dstDir string) error {
 	for _, f := range files {
 		baseName := filepath.Base(f)
 		dst := filepath.Join(dstDir, baseName)
-		// 如果目标不存在，或者大小不同，则复制 (简单同步逻辑)
-		// 这里为了简单，直接覆盖
+		// 优先尝试硬链接 (节省空间，速度极快)
+		// 如果失败 (如跨分区)，则回退到复制
+		// 先删除目标文件，防止 Link 报错 exist
+		os.Remove(dst)
+
+		if err := os.Link(f, dst); err == nil {
+			// 硬链接成功
+			continue
+		} else {
+			fmt.Printf("      ⚠️ 硬链接失败 (尝试复制): %v\n", err)
+		}
+
+		// 回退到复制模式
 		data, err := os.ReadFile(f)
 		if err != nil {
 			fmt.Printf("      ⚠️ 读取缓存文件失败 %s: %v\n", baseName, err)

@@ -64,6 +64,12 @@ func Load(path string) (*Config, error) {
 		cfg.Dist = cfg.DistDefault
 	}
 
+	// 如果仍为空，尝试从 /etc/os-release 自动识别
+	if cfg.Dist == "" {
+		cfg.Dist = detectDist()
+		fmt.Printf("👻 未配置 Dist，自动识别为: %s\n", cfg.Dist)
+	}
+
 	// 4. 处理相对路径
 	// 如果配置文件路径不是空的，计算它的基础目录
 	if absPath, err := filepath.Abs(path); err == nil {
