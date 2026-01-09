@@ -29,6 +29,7 @@ components:
     type: "service"                   # 类型 (仅做标记，暂不影响构建逻辑)
     spec: "specs/example.spec"        # SPEC 文件路径
     source_dir: "/home/user/code/src" # 源码绝对路径
+    excludes: ["logs", "tmp"]         # 排除的文件/目录模式 (如 "*.log", "tmp/")
 
     # [标签] 可用于灵活筛选，例如 -build infra
     tags: ["demo", "example"]

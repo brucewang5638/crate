@@ -100,7 +100,7 @@ func buildOne(cfg *config.Config, comp config.Component, force bool) error {
 
 		fmt.Printf("   📦 打包源码: %s -> %s\n", comp.SourceDir, tarName)
 		// assuming createTarball handles errors correctly
-		if err := createTarball(tarPath, comp.SourceDir, comp.Includes); err != nil {
+		if err := createTarball(tarPath, comp.SourceDir, comp.Includes, comp.Excludes); err != nil {
 			return fmt.Errorf("源码打包失败: %w", err)
 		}
 	}
@@ -157,28 +157,37 @@ func buildOne(cfg *config.Config, comp config.Component, force bool) error {
 	return nil
 }
 
-func createTarball(tarPath, srcDir string, includes []string) error {
+func createTarball(tarPath, srcDir string, includes, excludes []string) error {
 	// 使用 'tar' 命令进行打包
 
-	var cmd *exec.Cmd
+	var args []string
+
+	// 处理排除项 (Excludes)
+	// 注意: --exclude 必须放在非选项参数(如文件名)之前，或者作为选项的一部分
+	for _, pattern := range excludes {
+		args = append(args, fmt.Sprintf("--exclude=%s", pattern))
+	}
 
 	if len(includes) > 0 {
 		// 模式 A: 指定了 Includes
 		// 行为: 进入 srcDir，仅打包 includes 列出的文件/目录
 		// 结果: tar 包根目录下直接就是 include1, include2...
-		args := []string{"-czf", tarPath, "-C", srcDir}
+		args = append(args, "-czf", tarPath, "-C", srcDir)
 		args = append(args, includes...)
-		cmd = exec.Command("tar", args...)
-		fmt.Printf("      (包含: %v)\n", includes)
+		fmt.Printf("      (包含: %v, 排除: %v)\n", includes, excludes)
 	} else {
 		// 模式 B: 默认行为
 		// 行为: 进入 srcDir 的父目录，打包 srcDir 本身
 		// 结果: tar 包根目录下有一个顶层目录 (srcDir 的 basename)
 		parent := filepath.Dir(srcDir)
 		base := filepath.Base(srcDir)
-		cmd = exec.Command("tar", "-czf", tarPath, "-C", parent, base)
+		args = append(args, "-czf", tarPath, "-C", parent, base)
+		if len(excludes) > 0 {
+			fmt.Printf("      (包含: [全部], 排除: %v)\n", excludes)
+		}
 	}
 
+	cmd := exec.Command("tar", args...)
 	out, err := cmd.CombinedOutput()
 	if err != nil {
 		return fmt.Errorf("tar 命令失败: %s (%w)", string(out), err)

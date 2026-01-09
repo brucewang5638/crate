@@ -18,6 +18,7 @@ type Component struct {
 	Spec           string   `yaml:"spec"`            // SPEC 文件路径
 	SourceDir      string   `yaml:"source_dir"`      // 源码目录绝对路径
 	Includes       []string `yaml:"includes"`        // 仅打包指定的子文件/目录 (相对 SourceDir)
+	Excludes       []string `yaml:"excludes"`        // [新增] 排除的文件/目录模式 (如 "*.log", "tmp/")
 	PreBuild       string   `yaml:"pre_build"`       // 预构建脚本 (Shell 命令)
 	ValidateExists []string `yaml:"validate_exists"` // 必须存在的文件列表 (相对 SourceDir)
 	Tags           []string `yaml:"tags"`

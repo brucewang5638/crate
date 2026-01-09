@@ -35,10 +35,31 @@ go build -o crate ./cmd/crate
 #### 📦 正式发布 (提测/交付)
 构建所有构建块，并生成最终的发布包（包含 repo 和 install.sh）。
 ```bash
-./crate -build all -release
+     %s -build all -release
 ```
 
-### 3. 所有选项
+### 3. 标准工作流 (Workflow)
+
+为了保持打包环境的整洁，建议采用 **Build Once, Promote Anywhere** 的策略：
+
+1.  **开发/测试环境**: 编译源码，生成 JAR/Binary，产出测试报告。
+    *   *产出物*: `target/*.jar`, `bin/app`
+2.  **构件晋级 (Promote)**: 在测试机上运行 `promote.sh` 将产物推送到打包环境 (默认 192.168.3.10)。
+    ```bash
+    # 1. 晋级多个文件/目录 (混合相对路径与绝对路径)
+    ./scripts/promote.sh components/redis /opt/hk/hkservice/access/bus/bin/
+
+    # 2. 导出并晋级数据库 (hk-core, hkinfo_ticket, icp_analysis)
+    ./scripts/promote.sh --db
+    ```
+3.  **打包环境**: 登录打包机，运行 `crate` 进行 RPM 打包。
+    ```bash
+    ssh root@192.168.3.10
+    cd /opt/hk/crate
+    ./crate -build app
+    ```
+
+### 4. 所有选项
 ```text
   -build string
         指定构建的目标构建块名 (Name) 或 组名 (Group)，或者 'all'
