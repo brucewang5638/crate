@@ -162,28 +162,48 @@ func createTarball(tarPath, srcDir string, includes, excludes []string) error {
 
 	var args []string
 
-	// 处理排除项 (Excludes)
-	// 注意: --exclude 必须放在非选项参数(如文件名)之前，或者作为选项的一部分
-	for _, pattern := range excludes {
-		args = append(args, fmt.Sprintf("--exclude=%s", pattern))
-	}
-
 	if len(includes) > 0 {
-		// 模式 A: 指定了 Includes
+		// 模式 A: 指定了 Includes (显式包含)
 		// 行为: 进入 srcDir，仅打包 includes 列出的文件/目录
 		// 结果: tar 包根目录下直接就是 include1, include2...
+		// 在此模式下，Excludes 相对于 srcDir，直接使用即可
+		for _, pattern := range excludes {
+			args = append(args, fmt.Sprintf("--exclude=%s", pattern))
+		}
+
 		args = append(args, "-czf", tarPath, "-C", srcDir)
 		args = append(args, includes...)
 		fmt.Printf("      (包含: %v, 排除: %v)\n", includes, excludes)
 	} else {
-		// 模式 B: 默认行为
+		// 模式 B: 默认行为 (打包整个目录)
 		// 行为: 进入 srcDir 的父目录，打包 srcDir 本身
 		// 结果: tar 包根目录下有一个顶层目录 (srcDir 的 basename)
 		parent := filepath.Dir(srcDir)
 		base := filepath.Base(srcDir)
+
+		// 在此模式下，tar 包内的路径都以 base/ 开头
+		// 因此，用户提供的 exclude 模式如果是路径相关的 (含 /)，需要加上 base/ 前缀
+		// 如果只是简单的文件名匹配 (如 *.log)，则不需要加 (tar 默认匹配 basename)
+		var adaptedExcludes []string
+		for _, pattern := range excludes {
+			// 策略:
+			// 1. 如果包含路径分隔符 (如 "logs/"), 说明用户意图是匹配特定路径 -> 补全前缀 "base/logs/"
+			// 2. 如果不包含 (如 "*.log"), 说明是通配 -> 保持原样 (tar 会递归匹配所有同名文件)
+			// 注意: 这里简单判断 "/"，在 Linux 下有效
+			if strings.Contains(pattern, "/") {
+				// 使用 Join 拼接，保证路径格式正确
+				adapted := filepath.Join(base, pattern)
+				adaptedExcludes = append(adaptedExcludes, adapted)
+				args = append(args, fmt.Sprintf("--exclude=%s", adapted))
+			} else {
+				adaptedExcludes = append(adaptedExcludes, pattern)
+				args = append(args, fmt.Sprintf("--exclude=%s", pattern))
+			}
+		}
+
 		args = append(args, "-czf", tarPath, "-C", parent, base)
-		if len(excludes) > 0 {
-			fmt.Printf("      (包含: [全部], 排除: %v)\n", excludes)
+		if len(adaptedExcludes) > 0 {
+			fmt.Printf("      (包含: [全部], 排除: %v)\n", adaptedExcludes)
 		}
 	}
 
