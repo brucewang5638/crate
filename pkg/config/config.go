@@ -24,11 +24,18 @@ type Component struct {
 	Tags           []string `yaml:"tags"`
 }
 
+// ReleaseConfig 发布包相关配置
+type ReleaseConfig struct {
+	Encrypt  bool   `yaml:"encrypt"`  // 是否加密打包 (默认: false)
+	Password string `yaml:"password"` // 加密密码
+}
+
 type Config struct {
 	ProjectName string              `yaml:"project_name"`
 	DistDefault string              `yaml:"dist_default"`
 	CacheDir    string              `yaml:"cache_dir"`
 	BuildRoot   string              `yaml:"build_root"`
+	Release     ReleaseConfig       `yaml:"release"` // [新增] 发布包配置
 	Components  []Component         `yaml:"components"`
 	Groups      map[string][]string `yaml:"groups"`
 	SystemDeps  []string            `yaml:"system_deps"`

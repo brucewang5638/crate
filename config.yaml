@@ -7,6 +7,11 @@ project_name: "my-project"
 cache_dir: "~/.rpm_cache"   # 构建成功的 RPM 缓存路径
 build_root: "~/rpmbuild"    # rpmbuild 的临时工作空间
 
+# --- 发布包配置 ---
+release:
+  encrypt: false              # 是否加密打包 (使用 openssl aes-256-cbc)
+  password: "changeme"        # 加密密码 (encrypt 为 true 时生效)
+
 # --- 系统依赖 ---
 # 在使用 -release 时，会自动通过 repotrack/dnf 下载这些包及其依赖到仓库中
 system_deps:

@@ -19,6 +19,7 @@ func main() {
 	configFile := flag.String("config", "config.yaml", "配置文件路径")
 	buildTarget := flag.String("build", "", "指定构建的目标构建块或组 (例如: 'redis', 'components')")
 	release := flag.Bool("release", false, "生成最终发布包 (包含仓库和安装脚本)")
+	releaseName := flag.String("release-name", "", "自定义发布包名称 (默认: project_name-arch-dist-date)")
 	arch := flag.String("arch", "", "覆盖默认架构 (例如: aarch64)")
 	dist := flag.String("dist", "", "覆盖发行版标识 (例如: el7)")
 	force := flag.Bool("force", false, "强制重新构建，忽略缓存")
@@ -38,6 +39,8 @@ func main() {
 		fmt.Fprintf(flag.CommandLine.Output(), "     %s -build components\n", os.Args[0])
 		fmt.Fprintf(flag.CommandLine.Output(), "  生成发布包:\n")
 		fmt.Fprintf(flag.CommandLine.Output(), "     %s -release\n", os.Args[0])
+		fmt.Fprintf(flag.CommandLine.Output(), "  自定义发布包名称:\n")
+		fmt.Fprintf(flag.CommandLine.Output(), "     %s -release -release-name my-custom-release\n", os.Args[0])
 		fmt.Fprintf(flag.CommandLine.Output(), "  指定配置文件:\n")
 		fmt.Fprintf(flag.CommandLine.Output(), "     %s -config config_smzjg.yaml -build smzjg\n\n", os.Args[0])
 
@@ -91,7 +94,7 @@ func main() {
 
 	// 3. 执行发布任务
 	if *release {
-		if err := runRelease(cfg); err != nil {
+		if err := runRelease(cfg, *releaseName); err != nil {
 			fmt.Printf("❌ 发布失败: %v\n", err)
 			os.Exit(1)
 		}
@@ -103,8 +106,14 @@ func main() {
 	}
 }
 
-func runRelease(cfg *config.Config) error {
-	releaseName := fmt.Sprintf("%s-%s-%s-%s", cfg.ProjectName, cfg.Arch, cfg.Dist, time.Now().Format("20060102"))
+func runRelease(cfg *config.Config, customName string) error {
+	// 确定发布包名称: 优先使用自定义名称，否则自动生成
+	var releaseName string
+	if customName != "" {
+		releaseName = fmt.Sprintf("%s-%s-%s-%s", customName, cfg.Arch, cfg.Dist, time.Now().Format("20060102"))
+	} else {
+		releaseName = fmt.Sprintf("%s-%s-%s-%s", cfg.ProjectName, cfg.Arch, cfg.Dist, time.Now().Format("20060102"))
+	}
 	releaseDir := filepath.Join(os.Getenv("HOME"), releaseName)
 
 	fmt.Printf("\n🚀 开始生成发布包: %s\n", releaseName)
@@ -143,24 +152,50 @@ func runRelease(cfg *config.Config) error {
 
 	// 4. 生成版本清单 (Manifest)
 	manifestPath := filepath.Join(releaseDir, "VERSION_MANIFEST.txt")
-	manifestContent := fmt.Sprintf("发布版本: %s\n构建时间: %s\n架构: %s\n\n包含构建块:\n",
-		releaseName, time.Now().Format(time.RFC3339), cfg.Arch)
+	manifestContent := fmt.Sprintf("发布版本: %s\n构建时间: %s\n架构: %s\n加密: %v\n\n包含构建块:\n",
+		releaseName, time.Now().Format(time.RFC3339), cfg.Arch, cfg.Release.Encrypt)
 	for _, c := range cfg.Components {
 		manifestContent += fmt.Sprintf("- %s: %s\n", c.Name, c.Version)
 	}
 	os.WriteFile(manifestPath, []byte(manifestContent), 0644)
 
-	// 5. 打包最终 tar.gz
-	tarball := releaseDir + ".tar.gz"
-	fmt.Printf("   🗜️  正在生成最终压缩包: %s ...\n", filepath.Base(tarball))
+	// 5. 打包 (支持加密)
+	var tarball string
+	var cmd *exec.Cmd
 
-	// tar -C home -czf releaseName.tar.gz releaseName
-	cmd := exec.Command("tar", "-czf", tarball, "-C", filepath.Dir(releaseDir), filepath.Base(releaseDir))
+	if cfg.Release.Encrypt {
+		// 加密模式: tar | openssl enc
+		if cfg.Release.Password == "" {
+			return fmt.Errorf("启用加密但未配置密码 (release.password)")
+		}
+		tarball = releaseDir + ".tar.gz.enc"
+		fmt.Printf("   🔐 正在生成加密压缩包: %s ...\n", filepath.Base(tarball))
+
+		// 使用 shell 管道: tar -cz dir | openssl enc -aes-256-cbc -pbkdf2 -pass pass:xxx -out file
+		shellCmd := fmt.Sprintf(
+			"tar -cz -C %s %s | openssl enc -aes-256-cbc -pbkdf2 -pass pass:%s -out %s",
+			filepath.Dir(releaseDir),
+			filepath.Base(releaseDir),
+			cfg.Release.Password,
+			tarball,
+		)
+		cmd = exec.Command("bash", "-c", shellCmd)
+	} else {
+		// 普通模式
+		tarball = releaseDir + ".tar.gz"
+		fmt.Printf("   🗜️  正在生成最终压缩包: %s ...\n", filepath.Base(tarball))
+		cmd = exec.Command("tar", "-czf", tarball, "-C", filepath.Dir(releaseDir), filepath.Base(releaseDir))
+	}
+
 	if out, err := cmd.CombinedOutput(); err != nil {
-		return fmt.Errorf("tar 失败: %s", string(out))
+		return fmt.Errorf("打包失败: %s", string(out))
 	}
 
 	fmt.Printf("\n🎉 发布完成! 文件位于: %s\n", tarball)
+	if cfg.Release.Encrypt {
+		fmt.Printf("   💡 解密命令: openssl enc -d -aes-256-cbc -pbkdf2 -in %s -out %s.tar.gz\n",
+			filepath.Base(tarball), releaseName)
+	}
 
 	// 清理临时目录
 	if err := os.RemoveAll(releaseDir); err != nil {
